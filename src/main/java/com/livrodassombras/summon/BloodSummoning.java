@@ -82,7 +82,7 @@ public final class BloodSummoning {
 
     private static void discardThrownSpears(ServerLevel level, Player player) {
         for (Entity entity : level.getAllEntities()) {
-            if (entity instanceof BloodSpearEntity spear && spear.ownedBy(player)) {
+            if (entity instanceof BloodSpearEntity spear && spear.getOwner() == player) {
                 spear.discard();
             }
         }
