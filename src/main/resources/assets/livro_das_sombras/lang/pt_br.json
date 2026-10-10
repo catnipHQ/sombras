@@ -1,5 +1,5 @@
 {
-  "itemGroup.livro_das_sombras": "ID",
+  "itemGroup.livro_das_sombras": "Veritates",
   "item.livro_das_sombras.livro_das_sombras": "Livro das Sombras",
   "item.livro_das_sombras.espada_de_sangue": "Espada de Sangue",
   "message.livro_das_sombras.invocada": "Arma invocada: %s",
@@ -14,5 +14,15 @@
   "item.livro_das_sombras.arco_de_sangue": "Arco de Sangue",
   "entity.livro_das_sombras.lanca_de_sangue": "Lança de Sangue",
   "gui.livro_das_sombras.livro_do_sangue.title": "Livro do Sangue",
-  "gui.livro_das_sombras.livro_do_sangue.cost": "Escolha a arma. Custo: 5 corações e Náusea"
+  "gui.livro_das_sombras.livro_do_sangue.cost": "O preço: 5 corações e Náusea",
+  "message.livro_das_sombras.sem_sangue_arma": "Você não tem sangue suficiente.",
+  "message.livro_das_sombras.ja_tem_ser": "Você já tem um Ser de Sangue.",
+  "message.livro_das_sombras.ser_invocado": "Ser de Sangue invocado",
+  "message.livro_das_sombras.ser_dissipado": "O Ser de Sangue se dissipou.",
+  "message.livro_das_sombras.modo_guarda": "Modo de guarda",
+  "message.livro_das_sombras.modo_seguir": "Modo de seguir",
+  "entity.livro_das_sombras.ser_de_sangue": "Ser de Sangue",
+  "effect.livro_das_sombras.ser_de_sangue": "Ser de Sangue",
+  "effect.livro_das_sombras.sangrando": "Sangrando",
+  "gui.livro_das_sombras.livro_do_sangue.hint": "Teclas 1–%s · Esc para fechar"
 }

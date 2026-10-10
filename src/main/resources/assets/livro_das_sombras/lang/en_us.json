@@ -1,9 +1,9 @@
 {
-  "itemGroup.livro_das_sombras": "ID",
+  "itemGroup.livro_das_sombras": "Veritates",
   "item.livro_das_sombras.livro_das_sombras": "Livro das Sombras",
   "item.livro_das_sombras.espada_de_sangue": "Espada de Sangue",
   "message.livro_das_sombras.invocada": "Weapon summoned: %s",
-  "message.livro_das_sombras.ja_invocada": "Você já tem uma arma manifestada.",
+  "message.livro_das_sombras.ja_invocada": "You already have a manifested weapon.",
   "subtitles.livro_das_sombras.blood_summon": "Blood magic",
   "message.livro_das_sombras.inventario_cheio": "You need a free inventory slot.",
   "message.livro_das_sombras.sem_sangue": "You don't have enough blood for the summoning.",
@@ -14,5 +14,15 @@
   "item.livro_das_sombras.arco_de_sangue": "Arco de Sangue",
   "entity.livro_das_sombras.lanca_de_sangue": "Lança de Sangue",
   "gui.livro_das_sombras.livro_do_sangue.title": "Livro do Sangue",
-  "gui.livro_das_sombras.livro_do_sangue.cost": "Choose a weapon. Cost: 5 hearts and Nausea"
+  "gui.livro_das_sombras.livro_do_sangue.cost": "The price: 5 hearts and Nausea",
+  "message.livro_das_sombras.sem_sangue_arma": "You don't have enough blood.",
+  "message.livro_das_sombras.ja_tem_ser": "You already have a Blood Being.",
+  "message.livro_das_sombras.ser_invocado": "Blood Being summoned",
+  "message.livro_das_sombras.ser_dissipado": "The Blood Being has dissipated.",
+  "message.livro_das_sombras.modo_guarda": "Guard mode",
+  "message.livro_das_sombras.modo_seguir": "Follow mode",
+  "entity.livro_das_sombras.ser_de_sangue": "Blood Being",
+  "effect.livro_das_sombras.ser_de_sangue": "Blood Being",
+  "effect.livro_das_sombras.sangrando": "Bleeding",
+  "gui.livro_das_sombras.livro_do_sangue.hint": "Keys 1–%s · Esc to close"
 }

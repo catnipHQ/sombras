@@ -1,6 +1,7 @@
 package com.livrodassombras.registry;
 
 import com.livrodassombras.LivroDasSombras;
+import com.livrodassombras.entity.BloodBeingEntity;
 import com.livrodassombras.entity.BloodSpearEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -19,4 +20,11 @@ public class ModEntities {
                     .clientTrackingRange(4)
                     .updateInterval(20)
                     .build("lanca_de_sangue"));
+
+    public static final RegistryObject<EntityType<BloodBeingEntity>> SER_DE_SANGUE = ENTITIES.register(
+            "ser_de_sangue",
+            () -> EntityType.Builder.<BloodBeingEntity>of(BloodBeingEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.95F)
+                    .clientTrackingRange(8)
+                    .build("ser_de_sangue"));
 }

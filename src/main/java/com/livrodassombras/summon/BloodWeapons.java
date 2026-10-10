@@ -20,6 +20,11 @@ public final class BloodWeapons {
                 ModItems.ARCO_DE_SANGUE.get());
     }
 
+    /** Menu index of the Ser de Sangue, which comes right after the weapons. */
+    public static int beingIndex() {
+        return menuOrder().size();
+    }
+
     /** @return the weapon for a menu index, or null if the index is invalid. */
     public static Item byIndex(int index) {
         List<Item> weapons = menuOrder();

@@ -9,7 +9,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.network.NetworkEvent;
 
-/** Client to server: the weapon chosen in the Livro do Sangue menu (index in BloodWeapons.menuOrder()). */
+/**
+ * Client to server: the option chosen in the Livro do Sangue menu.
+ * Indexes 0..n-1 are BloodWeapons.menuOrder(); index n (BloodWeapons.beingIndex()) is the Ser de Sangue.
+ */
 public record SelectWeaponPacket(int index) {
 
     public static void encode(SelectWeaponPacket packet, FriendlyByteBuf buf) {
@@ -34,6 +37,11 @@ public record SelectWeaponPacket(int index) {
                 return;
             }
             if (player.getCooldowns().isOnCooldown(book)) {
+                return;
+            }
+
+            if (packet.index() == BloodWeapons.beingIndex()) {
+                BloodSummoning.summonBeing(player, book);
                 return;
             }
 

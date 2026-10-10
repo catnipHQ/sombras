@@ -1,6 +1,7 @@
 package com.livrodassombras.event;
 
 import com.livrodassombras.LivroDasSombras;
+import com.livrodassombras.entity.BloodBeingEntity;
 import com.livrodassombras.registry.ModSounds;
 import com.livrodassombras.summon.BloodWeapons;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -82,7 +83,7 @@ public class WeaponBindingEvents {
         }
     }
 
-    /** When the player dies the weapon disappears, even with keepInventory on. */
+    /** When the player dies the weapon disappears, even with keepInventory on, and so does their Ser de Sangue. */
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) {
@@ -97,6 +98,9 @@ public class WeaponBindingEvents {
         }
         if (BloodWeapons.is(player.containerMenu.getCarried())) {
             player.containerMenu.setCarried(ItemStack.EMPTY);
+        }
+        if (player.level() instanceof ServerLevel serverLevel) {
+            BloodBeingEntity.dissipateAllOf(serverLevel, player);
         }
     }
 
