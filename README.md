@@ -27,6 +27,10 @@ Criatura invocada pelo Livro do Sangue (mesmo custo: 5 corações e Náusea).
 - Segue e defende você como um lobo: ataca quem você atacar e quem atacar você.
 - **Botão direito** nele ativa o **modo de guarda** (mensagem no chat): ele fica parado no lugar, mas continua revidando se você atacar ou for atacado, e depois volta ao posto. Clique de novo para ele voltar a seguir.
 - Nunca ataca quem o invocou (nem os seus animais domesticados).
+- **Shift + botão direito** nele (só quem o invocou) abre o menu ritual:
+  1. **Prolongar:** custa 9,5 corações e o tempo restante volta para 10 minutos.
+  2. **Desfazer:** ele morre na hora.
+  3. **Sacrifício:** 3 corações saem da sua barra de vida (vida máxima) até ele morrer. Em troca ele ganha +5 de dano, +6 de armadura, +2 de resistência de armadura e resiste a empurrões. Uma vez por criatura.
 - Só um Ser de Sangue por vez. Ele se dissipa se você morrer, ou se você sair do jogo ou trocar de dimensão por mais de 5 s.
 
 ## Regras de invocação (valem para os dois livros)

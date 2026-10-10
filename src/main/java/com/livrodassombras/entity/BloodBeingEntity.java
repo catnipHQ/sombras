@@ -1,6 +1,10 @@
 package com.livrodassombras.entity;
 
+import com.livrodassombras.client.ClientHooks;
 import com.livrodassombras.registry.ModEffects;
+import com.livrodassombras.summon.BloodBond;
+import com.livrodassombras.summon.BloodPrice;
+import java.util.UUID;
 import java.util.EnumSet;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -8,6 +12,10 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -22,6 +30,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -36,6 +47,8 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import org.joml.Vector3f;
 
 /**
@@ -45,6 +58,8 @@ import org.joml.Vector3f;
  *   <li>Lives for 2 minutes; the summoner sees the remaining time as a status effect.</li>
  *   <li>Follows and defends its owner like a wolf: attacks whatever the owner attacks or whatever hurts the owner.</li>
  *   <li>Right-click toggles guard mode: it stays at its post, still defends, then returns to the post.</li>
+ *   <li>Shift + right-click (owner only) opens the ritual menu: prolong (9.5 hearts, 10 minutes),
+ *       undo (dies at once) and sacrifice (3 max-health hearts until it dies, for +5 damage and armor).</li>
  *   <li>Never attacks its owner, its owner's pets or its owner's other creatures.</li>
  * </ul>
  */
@@ -52,6 +67,23 @@ public class BloodBeingEntity extends TamableAnimal {
     public static final int LIFETIME_TICKS = 20 * 120; // 2 minutes
     /** How long the creature waits for an owner who logged off or changed dimension before dissipating. */
     private static final int OWNER_GRACE_TICKS = 20 * 5;
+
+    /** Ritual: prolong. */
+    public static final int PROLONG_TICKS = 20 * 60 * 10; // 10 minutes
+    public static final float PROLONG_COST = 19.0F;       // 9.5 hearts
+
+    /** Ritual: sacrifice. What the creature gains while the owner's 3 hearts are bound to it. */
+    private static final UUID SACRIFICE_ID = UUID.fromString("c2d7a5e1-0b3f-4e62-9a8d-71f5e3b4c6a0");
+    private static final double SACRIFICE_DAMAGE = 5.0D;
+    private static final double SACRIFICE_ARMOR = 6.0D;
+    private static final double SACRIFICE_TOUGHNESS = 2.0D;
+    private static final double SACRIFICE_KNOCKBACK_RESISTANCE = 0.5D;
+
+    /** Synced so the owner's ritual menu can show the remaining time and whether the sacrifice was made. */
+    private static final EntityDataAccessor<Integer> DATA_LIFE =
+            SynchedEntityData.defineId(BloodBeingEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_SACRIFICED =
+            SynchedEntityData.defineId(BloodBeingEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final DustParticleOptions BLOOD = new DustParticleOptions(new Vector3f(0.7F, 0.0F, 0.0F), 1.3F);
 
@@ -73,6 +105,22 @@ public class BloodBeingEntity extends TamableAnimal {
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ARMOR, 2.0D)
                 .add(Attributes.FOLLOW_RANGE, 35.0D);
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_LIFE, LIFETIME_TICKS);
+        this.entityData.define(DATA_SACRIFICED, false);
+    }
+
+    /** Remaining lifetime in ticks (approximate on the client: synced once a second). */
+    public int getLifeTicks() {
+        return this.level().isClientSide ? this.entityData.get(DATA_LIFE) : this.lifeTicks;
+    }
+
+    public boolean isSacrificed() {
+        return this.entityData.get(DATA_SACRIFICED);
     }
 
     @Override
@@ -112,6 +160,9 @@ public class BloodBeingEntity extends TamableAnimal {
             this.dissipate();
             return;
         }
+        if (this.tickCount % 20 == 0) {
+            this.entityData.set(DATA_LIFE, this.lifeTicks);
+        }
 
         LivingEntity owner = this.getOwner();
         if (owner == null) {
@@ -121,7 +172,8 @@ public class BloodBeingEntity extends TamableAnimal {
             return;
         }
         this.ownerMissingTicks = 0;
-        if (!owner.isAlive()) {
+        // Dead owner, or the owner's link now points elsewhere (e.g. this creature sat in an unloaded chunk).
+        if (!owner.isAlive() || (owner instanceof Player player && !BloodBond.isBoundTo(player, this))) {
             this.dissipate();
             return;
         }
@@ -166,21 +218,71 @@ public class BloodBeingEntity extends TamableAnimal {
         super.remove(reason);
     }
 
+    /** Releases the owner: timer effect removed, sacrificed hearts returned. */
     private void clearOwnerTimer() {
-        LivingEntity owner = this.getOwner();
-        if (owner != null) {
-            owner.removeEffect(ModEffects.SER_DE_SANGUE.get());
+        if (this.getOwner() instanceof Player owner && BloodBond.isBoundTo(owner, this)) {
+            BloodBond.release(owner);
         }
     }
 
-    /** True if {@code player} already has a living Ser de Sangue in this level. */
+    /** True if {@code player} already has a living Ser de Sangue (in any dimension). */
     public static boolean hasBeing(ServerLevel level, Player player) {
-        for (Entity entity : level.getAllEntities()) {
-            if (entity instanceof BloodBeingEntity being && being.isAlive() && being.isOwnedBy(player)) {
-                return true;
-            }
+        return player instanceof ServerPlayer serverPlayer && BloodBond.find(serverPlayer) != null;
+    }
+
+    // ---------------------------------------------------------------- rituals (owner's menu)
+
+    /** Prolong: 9.5 hearts for 10 more minutes of life (the timer is set to 10:00). */
+    public void ritualProlong(Player player) {
+        if (!BloodPrice.pay(player, PROLONG_COST)) {
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual_sem_sangue"), true);
+            return;
         }
-        return false;
+        this.lifeTicks = PROLONG_TICKS;
+        this.entityData.set(DATA_LIFE, this.lifeTicks);
+        this.ritualEffects(1.0F);
+        player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual_prolongado"), true);
+    }
+
+    /** Undo: the creature dies at once (its owner gets everything back as usual). */
+    public void ritualUndo() {
+        this.ritualEffects(0.5F);
+        this.kill();
+    }
+
+    /** Sacrifice: 3 of the owner's max-health hearts, until the creature dies, for +5 damage and much more armor. */
+    public void ritualSacrifice(Player player) {
+        if (this.isSacrificed()) {
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual_ja_feito"), true);
+            return;
+        }
+        if (!BloodBond.canSacrifice(player)) {
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual_sem_sangue"), true);
+            return;
+        }
+        BloodBond.applySacrifice(player);
+        addBuff(this, Attributes.ATTACK_DAMAGE, SACRIFICE_DAMAGE);
+        addBuff(this, Attributes.ARMOR, SACRIFICE_ARMOR);
+        addBuff(this, Attributes.ARMOR_TOUGHNESS, SACRIFICE_TOUGHNESS);
+        addBuff(this, Attributes.KNOCKBACK_RESISTANCE, SACRIFICE_KNOCKBACK_RESISTANCE);
+        this.entityData.set(DATA_SACRIFICED, true);
+        this.ritualEffects(0.7F);
+        player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual_sacrificio"), true);
+    }
+
+    private static void addBuff(LivingEntity entity, Attribute attribute, double amount) {
+        AttributeInstance instance = entity.getAttribute(attribute);
+        if (instance != null && instance.getModifier(SACRIFICE_ID) == null) {
+            instance.addPermanentModifier(new AttributeModifier(SACRIFICE_ID, "Sacrifício de sangue",
+                    amount, AttributeModifier.Operation.ADDITION));
+        }
+    }
+
+    private void ritualEffects(float pitch) {
+        if (this.level() instanceof ServerLevel level) {
+            level.sendParticles(BLOOD, this.getX(), this.getY() + 1.0D, this.getZ(), 35, 0.35D, 0.8D, 0.35D, 0.02D);
+            level.playSound(null, this.blockPosition(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.NEUTRAL, 0.7F, pitch);
+        }
     }
 
     /** Dissipates every Ser de Sangue owned by {@code player} in this level. */
@@ -198,6 +300,14 @@ public class BloodBeingEntity extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (hand != InteractionHand.MAIN_HAND || !this.isOwnedBy(player)) {
             return InteractionResult.PASS;
+        }
+        // Shift + right-click: the ritual menu, only for the summoner.
+        if (player.isShiftKeyDown()) {
+            if (this.level().isClientSide) {
+                int id = this.getId();
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openBeingMenu(id));
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
         if (!this.level().isClientSide) {
             this.guarding = !this.guarding;
@@ -326,6 +436,7 @@ public class BloodBeingEntity extends TamableAnimal {
         super.addAdditionalSaveData(tag);
         tag.putInt("LifeTicks", this.lifeTicks);
         tag.putBoolean("Guarding", this.guarding);
+        tag.putBoolean("Sacrificed", this.isSacrificed());
         if (this.guardPos != null) {
             tag.put("GuardPos", NbtUtils.writeBlockPos(this.guardPos));
         }
@@ -337,6 +448,8 @@ public class BloodBeingEntity extends TamableAnimal {
         if (tag.contains("LifeTicks")) {
             this.lifeTicks = tag.getInt("LifeTicks");
         }
+        this.entityData.set(DATA_LIFE, this.lifeTicks);
+        this.entityData.set(DATA_SACRIFICED, tag.getBoolean("Sacrificed"));
         this.guarding = tag.getBoolean("Guarding");
         this.guardPos = tag.contains("GuardPos") ? NbtUtils.readBlockPos(tag.getCompound("GuardPos")) : null;
     }

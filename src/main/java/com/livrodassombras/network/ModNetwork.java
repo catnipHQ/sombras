@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ModNetwork {
-    private static final String PROTOCOL_VERSION = "1";
+    private static final String PROTOCOL_VERSION = "2";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(LivroDasSombras.MOD_ID, "main"),
@@ -17,5 +17,7 @@ public class ModNetwork {
     public static void register() {
         CHANNEL.registerMessage(0, SelectWeaponPacket.class,
                 SelectWeaponPacket::encode, SelectWeaponPacket::decode, SelectWeaponPacket::handle);
+        CHANNEL.registerMessage(1, BeingRitualPacket.class,
+                BeingRitualPacket::encode, BeingRitualPacket::decode, BeingRitualPacket::handle);
     }
 }

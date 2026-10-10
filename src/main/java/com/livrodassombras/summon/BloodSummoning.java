@@ -91,6 +91,7 @@ public final class BloodSummoning {
         being.setTame(true);
         being.setOwnerUUID(player.getUUID());
         level.addFreshEntity(being);
+        BloodBond.bind(player, being);
 
         summonEffects(level, player);
         level.sendParticles(new DustParticleOptions(new Vector3f(0.7F, 0.0F, 0.0F), 1.4F),

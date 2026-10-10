@@ -14,7 +14,7 @@
   "item.livro_das_sombras.arco_de_sangue": "Arco de Sangue",
   "entity.livro_das_sombras.lanca_de_sangue": "Lança de Sangue",
   "gui.livro_das_sombras.livro_do_sangue.title": "Livro do Sangue",
-  "gui.livro_das_sombras.livro_do_sangue.cost": "O preço: 5 corações e Náusea",
+  "gui.livro_das_sombras.livro_do_sangue.cost": "O sangue custa um preço",
   "message.livro_das_sombras.sem_sangue_arma": "Você não tem sangue suficiente.",
   "message.livro_das_sombras.ja_tem_ser": "Você já tem um Ser de Sangue.",
   "message.livro_das_sombras.ser_invocado": "Ser de Sangue invocado",
@@ -24,5 +24,18 @@
   "entity.livro_das_sombras.ser_de_sangue": "Ser de Sangue",
   "effect.livro_das_sombras.ser_de_sangue": "Ser de Sangue",
   "effect.livro_das_sombras.sangrando": "Sangrando",
-  "gui.livro_das_sombras.livro_do_sangue.hint": "Teclas 1–%s · Esc para fechar"
+  "gui.livro_das_sombras.ritual.hint": "Teclas 1–%s · Esc para fechar",
+  "gui.livro_das_sombras.ser_de_sangue.title": "Ser de Sangue",
+  "gui.livro_das_sombras.ser_de_sangue.remaining": "Resta %s",
+  "gui.livro_das_sombras.ser_de_sangue.prolong": "Prolongar",
+  "gui.livro_das_sombras.ser_de_sangue.prolong.detail": "9,5 ♥ · 10 min",
+  "gui.livro_das_sombras.ser_de_sangue.undo": "Desfazer",
+  "gui.livro_das_sombras.ser_de_sangue.undo.detail": "morte imediata",
+  "gui.livro_das_sombras.ser_de_sangue.sacrifice": "Sacrifício",
+  "gui.livro_das_sombras.ser_de_sangue.sacrifice.detail": "3 ♥ · +5 dano, +armadura",
+  "gui.livro_das_sombras.ser_de_sangue.sacrifice.done": "já feito",
+  "message.livro_das_sombras.ritual_sem_sangue": "Você não tem sangue suficiente para este ritual.",
+  "message.livro_das_sombras.ritual_prolongado": "O Ser de Sangue vai durar mais 10 minutos.",
+  "message.livro_das_sombras.ritual_sacrificio": "Seu sangue fortalece o Ser de Sangue.",
+  "message.livro_das_sombras.ritual_ja_feito": "Este sacrifício já foi feito."
 }

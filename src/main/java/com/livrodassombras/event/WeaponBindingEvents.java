@@ -2,6 +2,8 @@ package com.livrodassombras.event;
 
 import com.livrodassombras.LivroDasSombras;
 import com.livrodassombras.entity.BloodBeingEntity;
+import com.livrodassombras.summon.BloodBond;
+import net.minecraft.server.level.ServerPlayer;
 import com.livrodassombras.registry.ModSounds;
 import com.livrodassombras.summon.BloodWeapons;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -60,6 +62,10 @@ public class WeaponBindingEvents {
         }
 
         Player player = event.player;
+        if (player.tickCount % 20 == 0 && player instanceof ServerPlayer serverPlayer) {
+            BloodBond.check(serverPlayer); // gives sacrificed hearts back if the Ser de Sangue is gone
+        }
+
         AbstractContainerMenu menu = player.containerMenu;
         if (!(menu instanceof ChestMenu || menu instanceof ShulkerBoxMenu
                 || menu instanceof HopperMenu || menu instanceof DispenserMenu)) {

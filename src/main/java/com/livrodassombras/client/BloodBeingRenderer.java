@@ -12,7 +12,6 @@ public class BloodBeingRenderer extends HumanoidMobRenderer<BloodBeingEntity, Bl
 
     public BloodBeingRenderer(EntityRendererProvider.Context context) {
         super(context, new BloodBeingModel(context.bakeLayer(ModModelLayers.SER_DE_SANGUE)), 0.5F);
-        this.addLayer(new BloodBeingEyesLayer(this));
     }
 
     @Override
