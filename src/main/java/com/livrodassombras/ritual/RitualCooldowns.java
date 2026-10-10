@@ -24,14 +24,23 @@ public final class RitualCooldowns {
     private RitualCooldowns() {}
 
     public static long left(Player player, MinorRitual ritual) {
-        CompoundTag tag = player.getPersistentData().getCompound(TAG);
-        return Math.max(0L, tag.getLong(ritual.id()) - player.level().getGameTime());
+        return left(player, ritual.id());
     }
 
     public static void start(ServerPlayer player, MinorRitual ritual) {
+        start(player, ritual.id(), ritual.cooldownTicks());
+    }
+
+    /** Any personal cooldown by id (rituals, and summons with their own wait such as the Foice do Tempo). */
+    public static long left(Player player, String id) {
+        CompoundTag tag = player.getPersistentData().getCompound(TAG);
+        return Math.max(0L, tag.getLong(id) - player.level().getGameTime());
+    }
+
+    public static void start(ServerPlayer player, String id, int ticks) {
         CompoundTag data = player.getPersistentData();
         CompoundTag tag = data.getCompound(TAG);
-        tag.putLong(ritual.id(), player.level().getGameTime() + ritual.cooldownTicks());
+        tag.putLong(id, player.level().getGameTime() + ticks);
         data.put(TAG, tag);
         sync(player);
     }

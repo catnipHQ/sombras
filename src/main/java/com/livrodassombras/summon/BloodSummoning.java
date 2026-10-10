@@ -105,7 +105,7 @@ public final class BloodSummoning {
     }
 
     /** One use of the book in the player's hand is spent; it crumbles after the last (creative players spend nothing). */
-    private static void spendBookUse(Player player, Item book) {
+    public static void spendBookUse(Player player, Item book) {
         for (net.minecraft.world.InteractionHand hand : net.minecraft.world.InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
             if (stack.is(book)) {

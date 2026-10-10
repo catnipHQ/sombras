@@ -3,25 +3,28 @@ package com.livrodassombras.client;
 import com.livrodassombras.network.BookSectionPacket;
 import com.livrodassombras.network.ModNetwork;
 import com.livrodassombras.network.SelectRitualPacket;
+import com.livrodassombras.ritual.BookPath;
 import com.livrodassombras.ritual.ClientRitualCooldowns;
 import com.livrodassombras.ritual.MinorRitual;
 import com.livrodassombras.ritual.RitualBook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-/** Rituais menores (locked section): choosing one charges the book; it's cast later with right-click. */
+/** Rituais menores (locked section) of either book: choosing one charges the book; it's cast later with right-click. */
 public class MinorRitualsScreen extends RitualScreen {
+    private final BookPath path;
     private boolean anyCooling;
 
-    public MinorRitualsScreen() {
-        super(Component.translatable("gui.livro_das_sombras.rituais.title"), 220);
+    public MinorRitualsScreen(BookPath path) {
+        super(Component.translatable("gui.livro_das_sombras.rituais.title"), 220, BookScreens.theme(path));
+        this.path = path;
     }
 
     @Override
     protected void buildOptions() {
         long now = ClientEvents.gameTime();
         this.anyCooling = false;
-        for (MinorRitual ritual : MinorRitual.values()) {
+        for (MinorRitual ritual : MinorRitual.of(this.path)) {
             float cooldown = ClientRitualCooldowns.fraction(ritual, now);
             this.anyCooling |= cooldown > 0.0F;
             this.options.add(new Option(ritual.displayName(), ritual.detail(), ritual.icon(), null, true, cooldown));
@@ -58,7 +61,7 @@ public class MinorRitualsScreen extends RitualScreen {
     @Override
     protected void back() {
         ModNetwork.CHANNEL.sendToServer(new BookSectionPacket(RitualBook.SECTION_NONE));
-        Minecraft.getInstance().setScreen(new BloodBookRootScreen());
+        Minecraft.getInstance().setScreen(new BloodBookRootScreen(this.path));
     }
 
     @Override

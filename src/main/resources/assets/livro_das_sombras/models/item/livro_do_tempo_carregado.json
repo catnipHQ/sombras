@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "livro_das_sombras:item/livro_do_tempo_carregado"
+  }
+}

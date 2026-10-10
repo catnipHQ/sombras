@@ -3,6 +3,7 @@ package com.livrodassombras.registry;
 import com.livrodassombras.LivroDasSombras;
 import com.livrodassombras.entity.BloodBeingEntity;
 import com.livrodassombras.entity.BloodSpearEntity;
+import com.livrodassombras.entity.TimeSkeletonEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
@@ -27,4 +28,12 @@ public class ModEntities {
                     .sized(0.6F, 1.95F)
                     .clientTrackingRange(8)
                     .build("ser_de_sangue"));
+
+    /** Esqueletinho do Tempo: a baby skeleton (the size is halved by isBaby()). */
+    public static final RegistryObject<EntityType<TimeSkeletonEntity>> ESQUELETO_DO_TEMPO = ENTITIES.register(
+            "esqueleto_do_tempo",
+            () -> EntityType.Builder.<TimeSkeletonEntity>of(TimeSkeletonEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.99F)
+                    .clientTrackingRange(8)
+                    .build("esqueleto_do_tempo"));
 }

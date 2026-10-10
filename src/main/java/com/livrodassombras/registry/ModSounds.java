@@ -14,6 +14,7 @@ public class ModSounds {
 
     public static final RegistryObject<SoundEvent> BLOOD_SUMMON = register("blood_summon");
     public static final RegistryObject<SoundEvent> BLOOD_SQUELCH = register("blood_squelch");
+    public static final RegistryObject<SoundEvent> TIME_SUMMON = register("time_summon");
 
     private static RegistryObject<SoundEvent> register(String name) {
         return SOUNDS.register(name, () ->

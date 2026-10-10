@@ -2,13 +2,34 @@
   "blood_summon": {
     "subtitle": "subtitles.livro_das_sombras.blood_summon",
     "sounds": [
-      { "name": "minecraft:entity.evoker.prepare_summon", "type": "event", "pitch": 0.6, "volume": 1.0 }
+      {
+        "name": "minecraft:entity.evoker.prepare_summon",
+        "type": "event",
+        "pitch": 0.6,
+        "volume": 1.0
+      }
     ]
   },
   "blood_squelch": {
     "subtitle": "subtitles.livro_das_sombras.blood_summon",
     "sounds": [
-      { "name": "minecraft:entity.slime.squish", "type": "event", "pitch": 0.5, "volume": 0.9 }
+      {
+        "name": "minecraft:entity.slime.squish",
+        "type": "event",
+        "pitch": 0.5,
+        "volume": 0.9
+      }
+    ]
+  },
+  "time_summon": {
+    "subtitle": "subtitles.livro_das_sombras.time_summon",
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.resonate",
+        "type": "event",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
     ]
   }
 }

@@ -3,6 +3,8 @@ package com.livrodassombras.ritual;
 import com.livrodassombras.registry.ModParticles;
 import com.livrodassombras.registry.ModSounds;
 import com.livrodassombras.summon.BloodPrice;
+import com.livrodassombras.summon.Bloodless;
+import com.livrodassombras.summon.TimePrice;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -51,6 +53,7 @@ public final class MinorRituals {
     private static final DustParticleOptions BLOOD = new DustParticleOptions(new Vector3f(0.7F, 0.0F, 0.0F), 1.2F);
     private static final DustParticleOptions BRIGHT_BLOOD = new DustParticleOptions(new Vector3f(0.95F, 0.05F, 0.05F), 1.5F);
     private static final DustParticleOptions DARK_BLOOD = new DustParticleOptions(new Vector3f(0.35F, 0.0F, 0.0F), 1.0F);
+    private static final DustParticleOptions BONE = new DustParticleOptions(new Vector3f(0.9F, 0.88F, 0.8F), 1.0F);
 
     private MinorRituals() {}
 
@@ -73,10 +76,14 @@ public final class MinorRituals {
             return;
         }
 
+        // Reverter Passos: marking the spot is free; only the way back counts as a cast.
         boolean cast = switch (ritual) {
             case DILACERAR -> castTear(player, level);
             case TROCA_DE_SANGUE -> castTrade(player, level);
             case CORTE_SANGRENTO -> castSlash(player, level);
+            case LENTIDAO -> TimeRituals.castSlow(player, level);
+            case MURCHAR -> TimeRituals.castWither(player, level);
+            case REVERTER_PASSOS -> TimeRituals.castRevert(player, level);
         };
         if (cast && !player.getAbilities().instabuild) {
             RitualCooldowns.start(player, ritual);
@@ -90,6 +97,13 @@ public final class MinorRituals {
         LivingEntity target = findTarget(player, TEAR_RANGE);
         if (target == null) {
             noTarget(player, TEAR_RANGE);
+            return false;
+        }
+        // Bone creatures have no blood to tear (nothing is charged).
+        if (Bloodless.is(target)) {
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual.sem_sangue_alvo",
+                    target.getDisplayName()), true);
+            level.playSound(null, player.blockPosition(), SoundEvents.SKELETON_HURT, SoundSource.PLAYERS, 0.6F, 0.6F);
             return false;
         }
         if (!payPrice(player, MinorRitual.DILACERAR)) {
@@ -267,8 +281,14 @@ public final class MinorRituals {
                 if (hurtIgnoringCooldown(target, source, SLASH_DAMAGE)) {
                     target.knockback(0.6D, -this.dir.x, -this.dir.z);
                 }
-                this.level.sendParticles(BRIGHT_BLOOD, centre.x, centre.y, centre.z, 20, 0.3D, 0.4D, 0.3D, 0.05D);
-                this.level.playSound(null, target.blockPosition(), ModSounds.BLOOD_SQUELCH.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
+                if (Bloodless.is(target)) {
+                    // No blood in bone: chips of bone instead.
+                    this.level.sendParticles(BONE, centre.x, centre.y, centre.z, 20, 0.3D, 0.4D, 0.3D, 0.05D);
+                    this.level.playSound(null, target.blockPosition(), SoundEvents.BONE_BLOCK_BREAK, SoundSource.PLAYERS, 0.8F, 1.0F);
+                } else {
+                    this.level.sendParticles(BRIGHT_BLOOD, centre.x, centre.y, centre.z, 20, 0.3D, 0.4D, 0.3D, 0.05D);
+                    this.level.playSound(null, target.blockPosition(), ModSounds.BLOOD_SQUELCH.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
+                }
             }
 
             this.travelled = to;
@@ -303,7 +323,7 @@ public final class MinorRituals {
     }
 
     /** Damage that doesn't use up (or get blocked by) the target's hurt cooldown. */
-    private static boolean hurtIgnoringCooldown(LivingEntity target, DamageSource source, float amount) {
+    static boolean hurtIgnoringCooldown(LivingEntity target, DamageSource source, float amount) {
         int cooldown = target.invulnerableTime;
         target.invulnerableTime = 0;
         boolean hurt = target.hurt(source, amount);
@@ -318,15 +338,21 @@ public final class MinorRituals {
         return p.distanceTo(a.add(ab.scale(t)));
     }
 
-    private static boolean payPrice(Player player, MinorRitual ritual) {
-        if (!BloodPrice.pay(player, ritual.cost())) {
-            player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual_sem_sangue"), true);
+    /** Health on the Blood path, hunger on the Time path. Never kills, creative players pay nothing. */
+    static boolean payPrice(Player player, MinorRitual ritual) {
+        boolean paid = ritual.path() == BookPath.TIME
+                ? TimePrice.pay(player, (int) ritual.cost())
+                : BloodPrice.pay(player, ritual.cost());
+        if (!paid) {
+            player.displayClientMessage(Component.translatable(ritual.path() == BookPath.TIME
+                    ? "message.livro_das_sombras.ritual_sem_fome"
+                    : "message.livro_das_sombras.ritual_sem_sangue"), true);
             return false;
         }
         return true;
     }
 
-    private static void noTarget(Player player, double range) {
+    static void noTarget(Player player, double range) {
         player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual.sem_alvo", (int) range), true);
     }
 }

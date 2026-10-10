@@ -1,7 +1,9 @@
 package com.livrodassombras.network;
 
 import com.livrodassombras.registry.ModItems;
+import com.livrodassombras.ritual.BookPath;
 import com.livrodassombras.ritual.MinorRitual;
+import com.livrodassombras.ritual.RitualBooks;
 import com.livrodassombras.ritual.RitualBook;
 import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,21 +30,22 @@ public record SelectRitualPacket(int index) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
-            MinorRitual ritual = MinorRitual.byIndex(packet.index());
-            if (player == null || ritual == null) {
+            if (player == null) {
                 return;
             }
-            for (InteractionHand hand : InteractionHand.values()) {
-                ItemStack book = player.getItemInHand(hand);
-                if (book.is(ModItems.LIVRO_DO_SANGUE.get())) {
-                    RitualBook.charge(book, ritual);
-                    player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual.preparado",
-                            ritual.displayName()), true);
-                    player.level().playSound(null, player.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE,
-                            SoundSource.PLAYERS, 1.0F, 0.6F);
-                    return;
-                }
+            // The index is within the rituals of the book actually in hand.
+            ItemStack book = RitualBooks.held(player);
+            BookPath path = BookPath.of(book);
+            MinorRitual ritual = path == null ? null : MinorRitual.byIndex(path, packet.index());
+            if (ritual == null) {
+                return;
             }
+            RitualBook.charge(book, ritual);
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual.preparado",
+                    ritual.displayName()), true);
+            player.level().playSound(null, player.blockPosition(),
+                    path == BookPath.TIME ? SoundEvents.LODESTONE_COMPASS_LOCK : SoundEvents.ENCHANTMENT_TABLE_USE,
+                    SoundSource.PLAYERS, 1.0F, 0.6F);
         });
         context.setPacketHandled(true);
     }

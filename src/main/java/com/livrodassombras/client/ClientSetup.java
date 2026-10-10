@@ -24,6 +24,7 @@ public class ClientSetup {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.LANCA_DE_SANGUE.get(), BloodSpearRenderer::new);
         event.registerEntityRenderer(ModEntities.SER_DE_SANGUE.get(), BloodBeingRenderer::new);
+        event.registerEntityRenderer(ModEntities.ESQUELETO_DO_TEMPO.get(), TimeSkeletonRenderer::new);
     }
 
     /** Ritual cauldron: the vanilla cauldron textures tinted dark purple, and the water texture tinted blood red. */
@@ -47,12 +48,16 @@ public class ClientSetup {
                 ModItems.CALDEIRAO_RITUALISTICO.get());
     }
 
-    /** The Livro do Sangue shows an eye on its cover while a ritual is prepared. */
+    /** While a ritual is prepared the Livro do Sangue shows an eye on its cover, and the Livro do Tempo's clock lights up. */
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> ItemProperties.register(ModItems.LIVRO_DO_SANGUE.get(),
-                new ResourceLocation(LivroDasSombras.MOD_ID, "carregado"),
-                (stack, level, entity, seed) -> RitualBook.charged(stack) != null ? 1.0F : 0.0F));
+        event.enqueueWork(() -> {
+            for (net.minecraft.world.item.Item book : new net.minecraft.world.item.Item[] {
+                    ModItems.LIVRO_DO_SANGUE.get(), ModItems.LIVRO_DO_TEMPO.get()}) {
+                ItemProperties.register(book, new ResourceLocation(LivroDasSombras.MOD_ID, "carregado"),
+                        (stack, level, entity, seed) -> RitualBook.charged(stack) != null ? 1.0F : 0.0F);
+            }
+        });
     }
 
     @SubscribeEvent

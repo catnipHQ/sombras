@@ -2,6 +2,7 @@ package com.livrodassombras.event;
 
 import com.livrodassombras.LivroDasSombras;
 import com.livrodassombras.entity.BloodBeingEntity;
+import com.livrodassombras.entity.TimeSkeletonEntity;
 import com.livrodassombras.summon.BloodBond;
 import net.minecraft.server.level.ServerPlayer;
 import com.livrodassombras.registry.ModSounds;
@@ -64,6 +65,7 @@ public class WeaponBindingEvents {
         Player player = event.player;
         if (player.tickCount % 20 == 0 && player instanceof ServerPlayer serverPlayer) {
             BloodBond.check(serverPlayer); // gives sacrificed hearts back if the Ser de Sangue is gone
+            TimeSkeletonEntity.check(serverPlayer); // no skeletons left, no timer
         }
 
         AbstractContainerMenu menu = player.containerMenu;
@@ -107,6 +109,9 @@ public class WeaponBindingEvents {
         }
         if (player.level() instanceof ServerLevel serverLevel) {
             BloodBeingEntity.dissipateAllOf(serverLevel, player);
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            TimeSkeletonEntity.dissipateAllOf(serverPlayer);
         }
     }
 
