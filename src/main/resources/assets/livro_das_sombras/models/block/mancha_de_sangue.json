@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "livro_das_sombras:block/mancha_de_sangue",
+    "stain": "livro_das_sombras:block/mancha_de_sangue"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0.1,
+        0
+      ],
+      "to": [
+        16,
+        0.1,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#stain"
+        },
+        "down": {
+          "texture": "#stain"
+        }
+      }
+    }
+  ]
+}

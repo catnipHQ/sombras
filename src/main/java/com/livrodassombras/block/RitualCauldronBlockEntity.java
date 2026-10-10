@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * Remembers how much meat the Caldeirão Ritualístico has taken.
  * <p>
- * Each piece of meat adds 1 + its saturation; the cauldron is complete at {@link #REQUIRED}.
+ * Each piece of meat adds 1 + its saturation (one piece at a time); the cauldron is complete at {@link #REQUIRED}.
  * So it takes about 34 rotten flesh, 22 raw beef, 8 cooked chicken or 5 steaks.
  */
 public class RitualCauldronBlockEntity extends BlockEntity {
@@ -61,7 +61,7 @@ public class RitualCauldronBlockEntity extends BlockEntity {
     }
 
     /**
-     * Feeds meat from {@code stack}, one piece at a time, until the cauldron is full.
+     * Takes exactly one piece of meat from {@code stack}.
      *
      * @param feeder the player who put it in by hand, or null for thrown meat
      * @return what is left of the stack
@@ -75,7 +75,7 @@ public class RitualCauldronBlockEntity extends BlockEntity {
             return stack;
         }
         int fill = state.getValue(RitualCauldronBlock.LEVEL);
-        if (fill == 0 || fill == RitualCauldronBlock.COMPLETE) {
+        if (fill == 0 || fill == RitualCauldronBlock.COMPLETE || !state.getValue(RitualCauldronBlock.SACRIFICED)) {
             return stack;
         }
 
@@ -83,15 +83,9 @@ public class RitualCauldronBlockEntity extends BlockEntity {
         if (value <= 0.0F) {
             return stack;
         }
-        int eaten = 0;
-        while (!stack.isEmpty() && this.meat < REQUIRED) {
-            stack.shrink(1);
-            this.meat += value;
-            eaten++;
-        }
-        if (eaten == 0) {
-            return stack;
-        }
+        stack.shrink(1);
+        this.meat += value;
+        int eaten = 1;
         this.setChanged();
 
         BlockPos pos = this.getBlockPos();

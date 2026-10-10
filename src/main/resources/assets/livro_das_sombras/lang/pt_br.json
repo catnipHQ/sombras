@@ -45,5 +45,7 @@
   "message.livro_das_sombras.caldeirao.mais_carne": "Precisa de mais carne. (%s)",
   "message.livro_das_sombras.caldeirao.progresso": "Carne: %s",
   "message.livro_das_sombras.caldeirao.completo": "O caldeirão está completo.",
-  "gui.livro_das_sombras.caldeirao.subtitle": "Escolha o livro"
+  "gui.livro_das_sombras.caldeirao.subtitle": "Escolha o livro",
+  "block.livro_das_sombras.mancha_de_sangue": "Mancha de Sangue",
+  "message.livro_das_sombras.caldeirao.busca_sacrificio": "O sangue busca por um sacrifício"
 }

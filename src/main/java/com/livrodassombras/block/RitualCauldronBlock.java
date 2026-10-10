@@ -1,6 +1,7 @@
 package com.livrodassombras.block;
 
 import com.livrodassombras.client.ClientHooks;
+import com.livrodassombras.registry.ModBlocks;
 import com.livrodassombras.registry.ModSounds;
 import com.livrodassombras.summon.BloodPrice;
 import javax.annotation.Nullable;
@@ -16,6 +17,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -45,8 +47,9 @@ import org.joml.Vector3f;
  * Caldeirão Ritualístico: the altar that makes the books.
  * <ol>
  *   <li>Light it with flint and steel.</li>
- *   <li>Right-click it: the player gives 4 health (2 hearts) and it partly fills with blood.</li>
- *   <li>Throw meat into it until it reaches 100% (meat with more saturation fills more).</li>
+ *   <li>Right-click it: the player gives 4 hearts, it partly fills with blood and blood stains the ground around it.</li>
+ *   <li>A creature must be killed on top of it or within one block of it (see {@link #onSacrifice}).</li>
+ *   <li>Throw meat into it, one piece at a time, until it reaches 100% (meat with more saturation fills more).</li>
  *   <li>Right-click the full cauldron: a menu to choose the Livro do Sangue or the Livro das Sombras.
  *       Choosing a book empties and puts out the cauldron, so every book costs a whole ritual.</li>
  * </ol>
@@ -55,9 +58,13 @@ public class RitualCauldronBlock extends BaseEntityBlock {
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     /** 0 empty, 1 blood, 2 and 3 filling with meat, 4 complete. */
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, 4);
+    /** The blood got its creature; only then does it take meat. */
+    public static final BooleanProperty SACRIFICED = BooleanProperty.create("sacrificed");
     public static final int COMPLETE = 4;
 
-    public static final float BLOOD_PRICE = 4.0F; // 2 hearts
+    public static final float BLOOD_PRICE = 8.0F; // 4 hearts
+    /** How far the blood stains reach around the cauldron. */
+    private static final int STAIN_RADIUS = 2;
 
     private static final VoxelShape INSIDE = box(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D);
     private static final VoxelShape SHAPE = Shapes.join(Shapes.block(),
@@ -71,12 +78,12 @@ public class RitualCauldronBlock extends BaseEntityBlock {
 
     public RitualCauldronBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(LIT, false).setValue(LEVEL, 0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(LIT, false).setValue(LEVEL, 0).setValue(SACRIFICED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(LIT, LEVEL);
+        builder.add(LIT, LEVEL, SACRIFICED);
     }
 
     @Override
@@ -148,8 +155,15 @@ public class RitualCauldronBlock extends BaseEntityBlock {
             level.playSound(null, pos, ModSounds.BLOOD_SQUELCH.get(), SoundSource.BLOCKS, 1.0F, 0.7F);
             level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.8F, 0.5F);
             bloodBurst((ServerLevel) level, pos, 25);
-            player.sendSystemMessage(Component.translatable("message.livro_das_sombras.caldeirao.busca_carne")
+            spreadStains((ServerLevel) level, pos);
+            player.sendSystemMessage(Component.translatable("message.livro_das_sombras.caldeirao.busca_sacrificio")
                     .withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+            return InteractionResult.CONSUME;
+        }
+
+        // Waiting for the sacrifice.
+        if (!state.getValue(SACRIFICED)) {
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.caldeirao.busca_sacrificio"), true);
             return InteractionResult.CONSUME;
         }
 
@@ -176,7 +190,7 @@ public class RitualCauldronBlock extends BaseEntityBlock {
             return;
         }
         int fill = state.getValue(LEVEL);
-        if (!state.getValue(LIT) || fill == 0 || fill == COMPLETE) {
+        if (!state.getValue(LIT) || !state.getValue(SACRIFICED) || fill == 0 || fill == COMPLETE) {
             return;
         }
         // Only items that actually sit in the bowl, not on the rim.
@@ -192,9 +206,90 @@ public class RitualCauldronBlock extends BaseEntityBlock {
             if (rest.isEmpty()) {
                 item.discard();
             } else {
+                // Only one piece is taken; the rest is spat back out over the rim.
                 item.setItem(rest);
+                RandomSource random = level.getRandom();
+                double angle = random.nextDouble() * Math.PI * 2.0D;
+                item.setPos(pos.getX() + 0.5D, pos.getY() + 1.05D, pos.getZ() + 0.5D);
+                item.setDeltaMovement(Math.cos(angle) * 0.22D, 0.32D, Math.sin(angle) * 0.22D);
             }
         }
+    }
+
+    // ---------------------------------------------------------------- sacrifice
+
+    /**
+     * A creature killed by a player on top of a waiting cauldron, or within one block of it, is its sacrifice.
+     * Called from the death event.
+     */
+    public static void onSacrifice(ServerLevel level, LivingEntity victim) {
+        BlockPos at = victim.blockPosition();
+        for (BlockPos pos : BlockPos.betweenClosed(at.offset(-1, -2, -1), at.offset(1, 1, 1))) {
+            BlockState state = level.getBlockState(pos);
+            if (!(state.getBlock() instanceof RitualCauldronBlock)
+                    || !state.getValue(LIT) || state.getValue(LEVEL) != 1 || state.getValue(SACRIFICED)) {
+                continue;
+            }
+            BlockPos cauldron = pos.immutable();
+            level.setBlock(cauldron, state.setValue(SACRIFICED, true), Block.UPDATE_ALL);
+            level.playSound(null, cauldron, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.35F, 1.6F);
+            level.playSound(null, cauldron, ModSounds.BLOOD_SQUELCH.get(), SoundSource.BLOCKS, 1.0F, 0.6F);
+            bloodBurst(level, cauldron, 40);
+            level.sendParticles(BLOOD, victim.getX(), victim.getY() + victim.getBbHeight() / 2.0D, victim.getZ(),
+                    30, 0.3D, 0.4D, 0.3D, 0.05D);
+            Component message = Component.translatable("message.livro_das_sombras.caldeirao.busca_carne")
+                    .withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
+            for (Player player : nearbyPlayers(level, cauldron)) {
+                player.sendSystemMessage(message);
+            }
+            return; // one creature feeds one cauldron
+        }
+    }
+
+    // ---------------------------------------------------------------- blood stains
+
+    /** Blood splashes on the ground around the cauldron: always the 8 blocks next to it, some further out. */
+    private static void spreadStains(ServerLevel level, BlockPos center) {
+        RandomSource random = level.getRandom();
+        BlockState stain = ModBlocks.MANCHA_DE_SANGUE.get().defaultBlockState();
+        for (int dx = -STAIN_RADIUS; dx <= STAIN_RADIUS; dx++) {
+            for (int dz = -STAIN_RADIUS; dz <= STAIN_RADIUS; dz++) {
+                if (dx == 0 && dz == 0) {
+                    continue;
+                }
+                boolean near = Math.abs(dx) <= 1 && Math.abs(dz) <= 1;
+                if (!near && random.nextInt(3) != 0) {
+                    continue;
+                }
+                // Find the ground at this column, a block above or below the cauldron's floor at most.
+                for (int dy = 1; dy >= -1; dy--) {
+                    BlockPos p = center.offset(dx, dy, dz);
+                    if (level.getBlockState(p).isAir() && stain.canSurvive(level, p)) {
+                        level.setBlock(p, stain, Block.UPDATE_ALL);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /** Wipes the stains (when the ritual ends or the cauldron is broken). */
+    public static void clearStains(Level level, BlockPos center) {
+        for (BlockPos p : BlockPos.betweenClosed(center.offset(-STAIN_RADIUS, -1, -STAIN_RADIUS),
+                center.offset(STAIN_RADIUS, 1, STAIN_RADIUS))) {
+            if (level.getBlockState(p).is(ModBlocks.MANCHA_DE_SANGUE.get())) {
+                level.removeBlock(p, false);
+            }
+        }
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            clearStains(level, pos);
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     // ---------------------------------------------------------------- looks

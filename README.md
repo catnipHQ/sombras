@@ -1,4 +1,4 @@
-# Veritates 1.0.7
+# Veritates 1.0.8
 
 Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**.
 
@@ -29,9 +29,10 @@ Bloco de ferro     Obsidiana      Bloco de ferro
 ```
 
 1. **Acenda** o caldeirão com um isqueiro (pederneira e aço).
-2. **Botão direito** nele: você perde **2 corações** (4 de vida) e ele enche um pouco de sangue. Aparece no chat: *"Ele busca pela carne"*.
-3. **Jogue carne** dentro dele (tecla Q em cima, ou botão direito com a carne na mão). Qualquer carne serve, inclusive carne podre; quanto mais saciedade a carne dá, mais ela enche. Cada peça vale 1 + a saciedade dela, e o caldeirão completa com 60. Na prática: uns 34 de carne podre, 22 de carne crua de vaca, 8 de frango assado ou 5 de bife. Antes de completar, o botão direito mostra *"Precisa de mais carne"* com a porcentagem.
-4. Ao chegar em 100%, aparece no chat *"O caldeirão está completo."*. **Botão direito** abre o menu: **Livro do Sangue** ou **Livro das Sombras**. Escolher um livro esvazia e apaga o caldeirão; para outro livro, faça o ritual de novo.
+2. **Botão direito** nele: você perde **4 corações** (8 de vida) e ele enche um pouco de sangue. O chão em volta fica **manchado de sangue** e aparece no chat: *"O sangue busca por um sacrifício"*.
+3. **Mate uma criatura** em cima do caldeirão ou a até 1 bloco dele (com a mão, uma arma ou flecha; jogadores e suportes de armadura não contam). Aparece no chat: *"Ele busca pela carne"*.
+4. **Jogue carne** dentro dele, **uma peça por vez** (tecla Q em cima, ou botão direito com a carne na mão). Se cair uma pilha inteira, ele come uma peça e cospe o resto para fora. Qualquer carne serve, inclusive carne podre; quanto mais saciedade a carne dá, mais ela enche. Cada peça vale 1 + a saciedade dela, e o caldeirão completa com 60. Na prática: uns 34 de carne podre, 22 de carne crua de vaca, 8 de frango assado ou 5 de bife. Antes de completar, o botão direito mostra *"Precisa de mais carne"* com a porcentagem.
+5. Ao chegar em 100%, aparece no chat *"O caldeirão está completo."*. **Botão direito** abre o menu: **Livro do Sangue** ou **Livro das Sombras**. Escolher um livro esvazia e apaga o caldeirão e limpa as manchas de sangue; para outro livro, faça o ritual de novo.
 
 Quebre com picareta de ferro ou melhor. Ao quebrar, o progresso se perde: ele volta vazio e apagado.
 
@@ -74,7 +75,7 @@ Requer JDK 17 e Gradle 8.1.1.
 
 ```bash
 gradle wrapper --gradle-version 8.1.1   # só na primeira vez (gera o ./gradlew)
-./gradlew build                         # jar em build/libs/veritates-1.0.7.jar
+./gradlew build                         # jar em build/libs/veritates-1.0.8.jar
 ./gradlew runClient                     # abre o Minecraft para testar
 ```
 

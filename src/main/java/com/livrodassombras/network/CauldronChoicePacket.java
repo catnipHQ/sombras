@@ -60,11 +60,13 @@ public record CauldronChoicePacket(BlockPos pos, int choice) {
             }
 
             // The ritual is spent: the cauldron empties and goes out.
-            level.setBlock(pos, state.setValue(RitualCauldronBlock.LEVEL, 0).setValue(RitualCauldronBlock.LIT, false),
+            level.setBlock(pos, state.setValue(RitualCauldronBlock.LEVEL, 0).setValue(RitualCauldronBlock.LIT, false)
+                            .setValue(RitualCauldronBlock.SACRIFICED, false),
                     Block.UPDATE_ALL);
             if (level.getBlockEntity(pos) instanceof RitualCauldronBlockEntity cauldron) {
                 cauldron.reset();
             }
+            RitualCauldronBlock.clearStains(level, pos);
 
             ItemStack stack = new ItemStack(book);
             if (!player.getInventory().add(stack)) {
