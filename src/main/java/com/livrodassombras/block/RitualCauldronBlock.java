@@ -48,7 +48,7 @@ import org.joml.Vector3f;
  * <ol>
  *   <li>Light it with flint and steel.</li>
  *   <li>Right-click it: the player gives 4 hearts, it partly fills with blood and blood stains the ground around it.</li>
- *   <li>A creature must be killed on top of it or within one block of it (see {@link #onSacrifice}).</li>
+ *   <li>A creature must be killed on top of it or within 3 blocks of it (see {@link #onSacrifice}).</li>
  *   <li>Throw meat into it, one piece at a time, until it reaches 100% (meat with more saturation fills more).</li>
  *   <li>Right-click the full cauldron: a menu to choose the Livro do Sangue or the Livro das Sombras.
  *       Choosing a book empties and puts out the cauldron, so every book costs a whole ritual.</li>
@@ -65,6 +65,8 @@ public class RitualCauldronBlock extends BaseEntityBlock {
     public static final float BLOOD_PRICE = 8.0F; // 4 hearts
     /** How far the blood stains reach around the cauldron. */
     private static final int STAIN_RADIUS = 2;
+    /** A creature killed this many blocks from the cauldron (or less) counts as the sacrifice. */
+    public static final int SACRIFICE_RADIUS = 3;
 
     private static final VoxelShape INSIDE = box(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D);
     private static final VoxelShape SHAPE = Shapes.join(Shapes.block(),
@@ -219,12 +221,14 @@ public class RitualCauldronBlock extends BaseEntityBlock {
     // ---------------------------------------------------------------- sacrifice
 
     /**
-     * A creature killed by a player on top of a waiting cauldron, or within one block of it, is its sacrifice.
+     * A creature killed by a player on top of a waiting cauldron, or within {@link #SACRIFICE_RADIUS} blocks of it,
+     * is its sacrifice.
      * Called from the death event.
      */
     public static void onSacrifice(ServerLevel level, LivingEntity victim) {
         BlockPos at = victim.blockPosition();
-        for (BlockPos pos : BlockPos.betweenClosed(at.offset(-1, -2, -1), at.offset(1, 1, 1))) {
+        int r = SACRIFICE_RADIUS;
+        for (BlockPos pos : BlockPos.betweenClosed(at.offset(-r, -r, -r), at.offset(r, 2, r))) {
             BlockState state = level.getBlockState(pos);
             if (!(state.getBlock() instanceof RitualCauldronBlock)
                     || !state.getValue(LIT) || state.getValue(LEVEL) != 1 || state.getValue(SACRIFICED)) {

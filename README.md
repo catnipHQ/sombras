@@ -13,8 +13,8 @@ Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombra
 
 | Arma | Dano | Particularidades |
 |------|------|------------------|
-| Espada de Sangue | 7 | Igual à espada de diamante (velocidade -2.4, 1561 de durabilidade). |
-| Lança de Sangue | 6 | Segure o botão direito e solte para arremessar como um tridente. Ela volta sozinha para você depois de acertar ou de cravar em um bloco. O arremesso aplica Lentidão por 1,5 s e deixa o alvo sangrando pelo mesmo tempo (o golpe corpo a corpo não). |
+| Espada de Sangue | 7 | Igual à espada de diamante (velocidade -2.4, 1561 de durabilidade). Cada golpe causa **Hemorragia** por 4 s: meio coração de dano por segundo e um rastro de sangue no chão enquanto o alvo anda, que some depois de alguns segundos. Golpes novos renovam o tempo, não acumulam. |
+| Lança de Sangue | 6 | Segure o botão direito e solte para arremessar como um tridente. Ela volta sozinha para você depois de acertar ou de cravar em um bloco. O arremesso aplica Lentidão por 2 s e deixa o alvo sangrando pelo mesmo tempo (o golpe corpo a corpo não). |
 | Martelo de Sangue | 10 | Lento (velocidade de ataque 0.6). Segure o botão direito para carregar (1 s) e solte: onda de choque que acerta todos em até 4 blocos com 5 de dano e empurra. Cada golpe custa 3 pontos de vida (1,5 coração). Recarga de 2 s. |
 | Arco de Sangue | 7 | Não gasta flechas, mas cada flecha custa 1 coração. 7 de dano com o arco totalmente puxado, e o tiro totalmente puxado é crítico (bônus aleatório do Minecraft, até 11). A flecha não pode ser recolhida. |
 
@@ -30,9 +30,9 @@ Bloco de ferro     Obsidiana      Bloco de ferro
 
 1. **Acenda** o caldeirão com um isqueiro (pederneira e aço).
 2. **Botão direito** nele: você perde **4 corações** (8 de vida) e ele enche um pouco de sangue. O chão em volta fica **manchado de sangue** e aparece no chat: *"O sangue busca por um sacrifício"*.
-3. **Mate uma criatura** em cima do caldeirão ou a até 1 bloco dele (com a mão, uma arma ou flecha; jogadores e suportes de armadura não contam). Aparece no chat: *"Ele busca pela carne"*.
+3. **Mate uma criatura** em cima do caldeirão ou a até 3 blocos dele (com a mão, uma arma ou flecha; jogadores e suportes de armadura não contam). Aparece no chat: *"Ele busca pela carne"*.
 4. **Jogue carne** dentro dele, **uma peça por vez** (tecla Q em cima, ou botão direito com a carne na mão). Se cair uma pilha inteira, ele come uma peça e cospe o resto para fora. Qualquer carne serve, inclusive carne podre; quanto mais saciedade a carne dá, mais ela enche. Cada peça vale 1 + a saciedade dela, e o caldeirão completa com 60. Na prática: uns 34 de carne podre, 22 de carne crua de vaca, 8 de frango assado ou 5 de bife. Antes de completar, o botão direito mostra *"Precisa de mais carne"* com a porcentagem.
-5. Ao chegar em 100%, aparece no chat *"O caldeirão está completo."*. **Botão direito** abre o menu: **Livro do Sangue** ou **Livro das Sombras**. Escolher um livro esvazia e apaga o caldeirão e limpa as manchas de sangue; para outro livro, faça o ritual de novo.
+5. Ao chegar em 100%, aparece no chat *"O caldeirão está completo."*. **Botão direito** abre o menu: **Livro do Sangue** ou **Livro das Sombras**. Escolher um livro completa o ritual: você fica com **Náusea e Escuridão por 5 s**, e o caldeirão esvazia, apaga e as manchas de sangue somem; para outro livro, faça o ritual de novo.
 
 Quebre com picareta de ferro ou melhor. Ao quebrar, o progresso se perde: ele volta vazio e apagado.
 

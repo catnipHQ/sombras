@@ -5,6 +5,8 @@ import com.livrodassombras.block.RitualCauldronBlock;
 import com.livrodassombras.registry.ModBlocks;
 import com.livrodassombras.registry.ModEntities;
 import com.livrodassombras.registry.ModItems;
+import com.livrodassombras.registry.ModParticles;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -39,6 +41,11 @@ public class ClientSetup {
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tintIndex) -> tintIndex == 0 ? CAULDRON_PURPLE : -1,
                 ModItems.CALDEIRAO_RITUALISTICO.get());
+    }
+
+    @SubscribeEvent
+    public static void registerParticles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.BLOOD_TRAIL.get(), BloodTrailParticle.Provider::new);
     }
 
     @SubscribeEvent

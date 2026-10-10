@@ -8,6 +8,7 @@ import com.livrodassombras.registry.ModCreativeTabs;
 import com.livrodassombras.registry.ModEffects;
 import com.livrodassombras.registry.ModEntities;
 import com.livrodassombras.registry.ModItems;
+import com.livrodassombras.registry.ModParticles;
 import com.livrodassombras.registry.ModSounds;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -28,6 +29,7 @@ public class LivroDasSombras {
         ModEntities.ENTITIES.register(modBus);
         ModSounds.SOUNDS.register(modBus);
         ModEffects.EFFECTS.register(modBus);
+        ModParticles.PARTICLES.register(modBus);
         ModCreativeTabs.TABS.register(modBus);
 
         modBus.addListener(this::commonSetup);

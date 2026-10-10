@@ -11,6 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -23,6 +25,7 @@ public record CauldronChoicePacket(BlockPos pos, int choice) {
     public static final int LIVRO_DAS_SOMBRAS = 1;
 
     private static final double MAX_DISTANCE_SQR = 8.0D * 8.0D;
+    private static final int RITUAL_TOLL_TICKS = 20 * 5;
 
     public static void encode(CauldronChoicePacket packet, FriendlyByteBuf buf) {
         buf.writeBlockPos(packet.pos);
@@ -72,6 +75,9 @@ public record CauldronChoicePacket(BlockPos pos, int choice) {
             if (!player.getInventory().add(stack)) {
                 player.drop(stack, false);
             }
+            // The ritual takes its toll: 5 seconds of Nausea and Darkness.
+            player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, RITUAL_TOLL_TICKS));
+            player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, RITUAL_TOLL_TICKS));
             level.playSound(null, pos, ModSounds.BLOOD_SUMMON.get(), SoundSource.BLOCKS, 1.0F, 1.2F);
             RitualCauldronBlock.bloodBurstPublic(level, pos);
         });

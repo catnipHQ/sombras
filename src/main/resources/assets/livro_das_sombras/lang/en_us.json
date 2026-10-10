@@ -47,5 +47,6 @@
   "message.livro_das_sombras.caldeirao.completo": "The cauldron is complete.",
   "gui.livro_das_sombras.caldeirao.subtitle": "Choose a book",
   "block.livro_das_sombras.mancha_de_sangue": "Mancha de Sangue",
-  "message.livro_das_sombras.caldeirao.busca_sacrificio": "O sangue busca por um sacrifício"
+  "message.livro_das_sombras.caldeirao.busca_sacrificio": "O sangue busca por um sacrifício",
+  "effect.livro_das_sombras.hemorragia": "Hemorrhage"
 }
