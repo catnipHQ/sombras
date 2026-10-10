@@ -14,7 +14,7 @@ import net.minecraftforge.fml.DistExecutor;
  * Upgraded Livro das Sombras. Right-click opens a menu to choose which weapon to summon;
  * the choice is sent to the server, which applies the same rules as the Livro das Sombras.
  */
-public class LivroDoSangueItem extends Item {
+public class LivroDoSangueItem extends LimitedBookItem {
     public LivroDoSangueItem(Properties properties) {
         super(properties);
     }

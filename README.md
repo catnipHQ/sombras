@@ -1,4 +1,4 @@
-# Veritates 1.0.8
+# Veritates 1.0.9
 
 Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**.
 
@@ -53,6 +53,8 @@ Criatura invocada pelo Livro do Sangue (mesmo custo: 5 corações e Náusea).
 
 ## Regras de invocação (valem para os dois livros)
 
+- Cada livro tem **5 usos** (a barra de durabilidade e a dica do item mostram quantos restam). Só invocações que dão certo gastam um uso. No último uso o livro se desfaz. Não aceita encantamentos (nem Inquebrável ou Remendo) e não pode ser consertado; para outro livro, faça o ritual do caldeirão de novo. No modo criativo não gasta.
+
 - Custa **5 corações** de vida e dá **2 segundos de Náusea**.
 - A invocação é recusada se mataria você, se o inventário estiver cheio ou se você **já tem uma arma**.
 - Recarga de 5 s no livro.
@@ -75,7 +77,7 @@ Requer JDK 17 e Gradle 8.1.1.
 
 ```bash
 gradle wrapper --gradle-version 8.1.1   # só na primeira vez (gera o ./gradlew)
-./gradlew build                         # jar em build/libs/veritates-1.0.8.jar
+./gradlew build                         # jar em build/libs/veritates-1.0.9.jar
 ./gradlew runClient                     # abre o Minecraft para testar
 ```
 

@@ -19,10 +19,10 @@ public class ModItems {
 
     // Books
     public static final RegistryObject<Item> LIVRO_DAS_SOMBRAS = ITEMS.register("livro_das_sombras",
-            () -> new LivroDasSombrasItem(new Item.Properties().stacksTo(1)));
+            () -> new LivroDasSombrasItem(new Item.Properties()));
 
     public static final RegistryObject<Item> LIVRO_DO_SANGUE = ITEMS.register("livro_do_sangue",
-            () -> new LivroDoSangueItem(new Item.Properties().stacksTo(1)));
+            () -> new LivroDoSangueItem(new Item.Properties()));
 
     // Blocks
     public static final RegistryObject<Item> CALDEIRAO_RITUALISTICO = ITEMS.register("caldeirao_ritualistico",

@@ -60,6 +60,7 @@ public final class BloodSummoning {
         player.getInventory().add(new ItemStack(weapon));
 
         summonEffects(level, player);
+        spendBookUse(player, book);
         player.getCooldowns().addCooldown(book, COOLDOWN_TICKS);
         player.displayClientMessage(
                 Component.translatable("message.livro_das_sombras.invocada", weapon.getDescription()), true);
@@ -97,9 +98,21 @@ public final class BloodSummoning {
         level.sendParticles(new DustParticleOptions(new Vector3f(0.7F, 0.0F, 0.0F), 1.4F),
                 being.getX(), being.getY() + 1.0, being.getZ(), 60, 0.4, 0.9, 0.4, 0.02);
 
+        spendBookUse(player, book);
         player.getCooldowns().addCooldown(book, COOLDOWN_TICKS);
         player.displayClientMessage(Component.translatable("message.livro_das_sombras.ser_invocado"), true);
         return true;
+    }
+
+    /** One use of the book in the player's hand is spent; it crumbles after the last (creative players spend nothing). */
+    private static void spendBookUse(Player player, Item book) {
+        for (net.minecraft.world.InteractionHand hand : net.minecraft.world.InteractionHand.values()) {
+            ItemStack stack = player.getItemInHand(hand);
+            if (stack.is(book)) {
+                stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                return;
+            }
+        }
     }
 
     /** Charges 5 hearts and applies Nausea. The summoning must never kill the player. */

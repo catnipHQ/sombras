@@ -48,5 +48,6 @@
   "gui.livro_das_sombras.caldeirao.subtitle": "Escolha o livro",
   "block.livro_das_sombras.mancha_de_sangue": "Mancha de Sangue",
   "message.livro_das_sombras.caldeirao.busca_sacrificio": "O sangue busca por um sacrifício",
-  "effect.livro_das_sombras.hemorragia": "Hemorragia"
+  "effect.livro_das_sombras.hemorragia": "Hemorragia",
+  "tooltip.livro_das_sombras.usos": "Usos restantes: %s/%s"
 }
