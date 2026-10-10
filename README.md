@@ -1,4 +1,4 @@
-# Veritates 1.0.9
+# Veritates 1.0.10
 
 Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**.
 
@@ -94,7 +94,7 @@ Requer JDK 17 e Gradle 8.1.1.
 
 ```bash
 gradle wrapper --gradle-version 8.1.1   # só na primeira vez (gera o ./gradlew)
-./gradlew build                         # jar em build/libs/veritates-1.0.9.jar
+./gradlew build                         # jar em build/libs/veritates-1.0.10.jar
 ./gradlew runClient                     # abre o Minecraft para testar
 ```
 
