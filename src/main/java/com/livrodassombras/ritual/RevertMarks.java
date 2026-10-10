@@ -28,8 +28,8 @@ import net.minecraftforge.network.PacketDistributor;
  */
 @Mod.EventBusSubscriber(modid = LivroDasSombras.MOD_ID)
 public final class RevertMarks {
-    public static final double RANGE = 48.0D;
-    public static final double WARN_RANGE = 40.0D;
+    public static final double RANGE = 20.0D;
+    public static final double WARN_RANGE = 16.0D;
     public static final int LIFETIME_TICKS = 20 * 60 * 5; // 5 minutes
 
     private static final String TAG = "veritates_passo";
@@ -135,7 +135,7 @@ public final class RevertMarks {
             mark.putBoolean("Warned", true);
             TimeRituals.say(player, "message.livro_das_sombras.passo.aviso", (int) Math.ceil(RANGE - distance));
             player.playNotifySound(SoundEvents.NOTE_BLOCK_BASS.value(), SoundSource.PLAYERS, 1.0F, 0.5F);
-        } else if (distance < WARN_RANGE - 4.0D && warned) {
+        } else if (distance < WARN_RANGE - 2.0D && warned) {
             mark.putBoolean("Warned", false);
         }
 

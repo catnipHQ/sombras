@@ -46,7 +46,7 @@ public class RitualCooldownOverlay implements IGuiOverlay {
             }
         }
 
-        // Reverter Passos: "⟲ 23/48 · 4:12", turning red near the edge.
+        // Reverter Passos: "Passo 12/20 · 4:12", turning red near the edge.
         Vec3 spot = ClientRevertMark.spot();
         if (spot != null) {
             double distance = mc.player.position().distanceTo(spot);
