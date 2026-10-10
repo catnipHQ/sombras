@@ -6,8 +6,8 @@ Mod **ID** para Minecraft **Forge 1.20.1**, que adiciona o **Livro das Sombras**
 
 | Item | Descrição |
 |------|-----------|
-| Livro das Sombras | Botão direito invoca a Espada de Sangue (uma por vez, recarga de 5 s), com som de magia de sangue e partículas vermelhas. |
-| Espada de Sangue | Mesmos atributos da espada de diamante: 7 de dano, velocidade de ataque -2.4, 1561 de durabilidade. |
+| Livro das Sombras | Botão direito invoca a Espada de Sangue (uma por vez, recarga de 5 s), com som de magia de sangue e partículas vermelhas. O preço é **5 corações de vida** e **1 segundo de Náusea**. A invocação é recusada se isso mataria você ou se o inventário estiver cheio. |
+| Espada de Sangue | Mesmos atributos da espada de diamante: 7 de dano, velocidade de ataque -2.4, 1561 de durabilidade. **Não pode ser largada** (tecla Q, arrastar para fora do inventário) e desaparece quando o jogador morre (mesmo com keepInventory). |
 
 Todo o conteúdo fica na aba própria **ID** do modo criativo.
 

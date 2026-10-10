@@ -4,5 +4,8 @@
   "item.livro_das_sombras.espada_de_sangue": "Espada de Sangue",
   "message.livro_das_sombras.invocada": "The Espada de Sangue has been summoned.",
   "message.livro_das_sombras.ja_invocada": "You already own an Espada de Sangue.",
-  "subtitles.livro_das_sombras.blood_summon": "Blood magic"
+  "subtitles.livro_das_sombras.blood_summon": "Blood magic",
+  "message.livro_das_sombras.inventario_cheio": "You need a free inventory slot.",
+  "message.livro_das_sombras.sem_sangue": "You don't have enough blood for the summoning.",
+  "message.livro_das_sombras.nao_pode_largar": "The Espada de Sangue is bound to you and cannot be dropped."
 }

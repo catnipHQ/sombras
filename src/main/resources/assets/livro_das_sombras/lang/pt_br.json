@@ -4,5 +4,8 @@
   "item.livro_das_sombras.espada_de_sangue": "Espada de Sangue",
   "message.livro_das_sombras.invocada": "A Espada de Sangue foi invocada.",
   "message.livro_das_sombras.ja_invocada": "Você já possui uma Espada de Sangue.",
-  "subtitles.livro_das_sombras.blood_summon": "Magia de sangue"
+  "subtitles.livro_das_sombras.blood_summon": "Magia de sangue",
+  "message.livro_das_sombras.inventario_cheio": "Você precisa de um espaço livre no inventário.",
+  "message.livro_das_sombras.sem_sangue": "Você não tem sangue suficiente para a invocação.",
+  "message.livro_das_sombras.nao_pode_largar": "A Espada de Sangue está presa a você e não pode ser largada."
 }
