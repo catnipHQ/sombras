@@ -1,4 +1,4 @@
-# Veritates 1.0.10
+# Veritates 1.0.11
 
 Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**.
 
@@ -8,6 +8,12 @@ Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombra
 |------|-----------|
 | Livro das Sombras | Botão direito invoca a Espada de Sangue. |
 | Livro do Sangue | Botão direito abre o livro em duas seções: **I. Invocações** (espada, lança, martelo, arco ou Ser de Sangue, como antes) e **II. Rituais menores** (feitiços de sangue, veja abaixo). Não substitui o Livro das Sombras, os dois existem. |
+
+### Seções travadas e roda de seleção
+
+Ao escolher uma seção, o livro fica **travado** nela: o botão direito passa a abrir direto essa seção. Para trocar, use **‹ Voltar** embaixo da lista (ou a tecla Backspace).
+
+Com uma seção travada e o livro na mão, a tecla **R** abre uma **roda de seleção**: mova o mouse na direção da opção e solte o R (ou clique) para escolher. Na roda das Invocações a escolha invoca na hora; na dos Rituais ela prepara o ritual. Apertar R de novo sem escolher fecha a roda. Sem seção travada, o R abre o menu normal. A tecla pode ser trocada em Opções > Controles, na categoria "Veritates".
 
 ## Armas
 
@@ -25,7 +31,7 @@ Escolher um ritual no menu **prepara** o livro: aparece um olho na capa, ele bri
 - **Botão direito** lança o ritual. O livro continua preparado, então dá para lançar de novo quando a recarga acabar.
 - **Shift + botão direito** cancela e o livro volta ao normal (e o botão direito volta a abrir o menu).
 
-Os rituais custam vida (nunca o suficiente para matar), não gastam usos do livro, e cada um tem sua própria recarga, guardada no livro (o menu mostra quanto falta). No modo criativo não custam vida nem têm recarga.
+Os rituais custam vida (nunca o suficiente para matar) e **cada lançamento gasta um uso do livro**, como as invocações. Cada ritual tem sua própria recarga, que é sua (não do livro): enquanto recarrega, aparece uma **barrinha vermelha com o ícone do ritual no canto inferior esquerdo da tela**, sempre visível, e o menu e a roda mostram a mesma barra. Tentar lançar antes da hora só faz um clique abafado. A recarga zera quando você morre. No modo criativo os rituais não custam vida, usos nem recarga.
 
 | Ritual | Custo | Efeito | Recarga |
 |--------|-------|--------|---------|
@@ -33,7 +39,7 @@ Os rituais custam vida (nunca o suficiente para matar), não gastam usos do livr
 | Troca de sangue | 3 ♥ | Mire em um jogador ou criatura a até 8 blocos: ele recupera 4 ♥. Um fio de sangue liga vocês. Não funciona se ele já estiver com a vida cheia (nada é cobrado). | 10 s |
 | Corte sangrento | 4 ♥ | Um corte de sangue sai em linha reta por 10 blocos (para na primeira parede) e acerta tudo no caminho com 7 ♥ de dano (a armadura reduz) e um empurrão. Não acerta os seus animais nem o seu Ser de Sangue. | 40 s |
 
-Sem alvo na mira, Dilacerar e Troca de sangue não são lançados e nada é cobrado.
+Sem alvo na mira, Dilacerar e Troca de sangue não são lançados e nada é cobrado (nem vida, nem uso do livro).
 
 ## Caldeirão Ritualístico
 
@@ -70,7 +76,7 @@ Criatura invocada pelo Livro do Sangue (mesmo custo: 5 corações e Náusea).
 
 ## Regras de invocação (valem para os dois livros)
 
-- Cada livro tem **5 usos** (a barra de durabilidade e a dica do item mostram quantos restam). Só invocações que dão certo gastam um uso. No último uso o livro se desfaz. Não aceita encantamentos (nem Inquebrável ou Remendo) e não pode ser consertado; para outro livro, faça o ritual do caldeirão de novo. No modo criativo não gasta.
+- Cada livro tem **5 usos** (a barra de durabilidade e a dica do item mostram quantos restam). Invocações e rituais menores que dão certo gastam um uso cada. No último uso o livro se desfaz. Não aceita encantamentos (nem Inquebrável ou Remendo) e não pode ser consertado; para outro livro, faça o ritual do caldeirão de novo. No modo criativo não gasta.
 
 - Custa **5 corações** de vida e dá **2 segundos de Náusea**.
 - A invocação é recusada se mataria você, se o inventário estiver cheio ou se você **já tem uma arma**.
@@ -94,7 +100,7 @@ Requer JDK 17 e Gradle 8.1.1.
 
 ```bash
 gradle wrapper --gradle-version 8.1.1   # só na primeira vez (gera o ./gradlew)
-./gradlew build                         # jar em build/libs/veritates-1.0.10.jar
+./gradlew build                         # jar em build/libs/veritates-1.0.11.jar
 ./gradlew runClient                     # abre o Minecraft para testar
 ```
 

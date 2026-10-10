@@ -40,18 +40,31 @@ public abstract class RitualScreen extends Screen {
     private static final int NUMERAL_HOVER = 0xD84848;
     private static final int RUNE = 0xA01212;
 
-    /** One entry: item icon or texture icon (18x18), name, optional detail on the right. */
+    /**
+     * One entry: item icon or texture icon (18x18), name, optional detail on the right.
+     * {@code cooldown} (0 to 1) replaces the detail with a small red bar while something is recharging.
+     */
     protected record Option(Component name, @Nullable Component detail, ItemStack item,
-                            @Nullable ResourceLocation texture, boolean enabled) {}
+                            @Nullable ResourceLocation texture, boolean enabled, float cooldown) {
+        public Option(Component name, @Nullable Component detail, ItemStack item,
+                      @Nullable ResourceLocation texture, boolean enabled) {
+            this(name, detail, item, texture, enabled, 0.0F);
+        }
+    }
+
+    private static final int COOLDOWN_BAR_WIDTH = 40;
 
     protected final List<Option> options = new ArrayList<>();
-    private final int rowWidth;
+    private final int minRowWidth;
+    private int rowWidth;
+    private int backY;
     private int listTop;
     private int listHeight;
     private long openedAt;
 
     protected RitualScreen(Component title, int rowWidth) {
         super(title);
+        this.minRowWidth = rowWidth;
         this.rowWidth = rowWidth;
     }
 
@@ -63,6 +76,19 @@ public abstract class RitualScreen extends Screen {
 
     protected abstract void choose(int index);
 
+    /** A "Back" link under the list when non-null (Backspace does the same). */
+    @Nullable
+    protected Component backLabel() {
+        return null;
+    }
+
+    protected void back() {}
+
+    /** The line at the bottom. */
+    protected Component hint() {
+        return Component.translatable("gui.livro_das_sombras.ritual.hint", this.options.size());
+    }
+
     @Override
     protected void init() {
         this.openedAt = Util.getMillis();
@@ -73,16 +99,35 @@ public abstract class RitualScreen extends Screen {
         this.clearWidgets();
         this.options.clear();
         this.buildOptions();
+        // Wide enough that a name never runs into its detail.
+        int content = 0;
+        for (Option option : this.options) {
+            int right = option.cooldown() > 0.0F ? COOLDOWN_BAR_WIDTH
+                    : option.detail() == null ? 0 : this.font.width(option.detail());
+            content = Math.max(content, this.font.width(option.name()) + (right > 0 ? 16 + right : 0));
+        }
+        this.rowWidth = Math.min(Math.max(this.minRowWidth, 56 + content + 10), this.width - 16);
         this.listHeight = this.options.size() * ROW_HEIGHT + (this.options.size() - 1) * ROW_GAP;
         this.listTop = this.height / 2 - this.listHeight / 2 + 14;
         int x = this.width / 2 - this.rowWidth / 2;
         for (int i = 0; i < this.options.size(); i++) {
             this.addRenderableWidget(new RitualRow(i, x, this.listTop + i * (ROW_HEIGHT + ROW_GAP)));
         }
+        this.backY = this.listTop + this.listHeight + 10;
+        Component back = this.backLabel();
+        if (back != null) {
+            Component label = Component.literal("‹ ").append(back);
+            int w = this.font.width(label) + 12;
+            this.addRenderableWidget(new BackLink(this.width / 2 - w / 2, this.backY - 2, w, 12, label));
+        }
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_BACKSPACE && this.backLabel() != null) {
+            this.back();
+            return true;
+        }
         int index = keyCode - GLFW.GLFW_KEY_1;
         if (index >= 0 && index < this.options.size()) {
             if (this.options.get(index).enabled()) {
@@ -212,9 +257,36 @@ public abstract class RitualScreen extends Screen {
 
         super.render(graphics, mouseX, mouseY, partialTick);
 
-        Component hint = Component.translatable("gui.livro_das_sombras.ritual.hint", this.options.size());
-        graphics.drawString(this.font, hint, cx - this.font.width(hint) / 2,
-                this.listTop + this.listHeight + 12, textColor(HINT, f), false);
+        Component hint = this.hint();
+        int hintY = this.backLabel() != null ? this.backY + 18 : this.listTop + this.listHeight + 12;
+        graphics.drawString(this.font, hint, cx - this.font.width(hint) / 2, hintY, textColor(HINT, f), false);
+    }
+
+    // ---------------------------------------------------------------- back link
+
+    private class BackLink extends AbstractButton {
+        BackLink(int x, int y, int w, int h, Component label) {
+            super(x, y, w, h, label);
+        }
+
+        @Override
+        public void onPress() {
+            RitualScreen.this.back();
+        }
+
+        @Override
+        public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            float f = RitualScreen.this.fade();
+            boolean lit = this.isHoveredOrFocused();
+            Font font = RitualScreen.this.font;
+            graphics.drawString(font, this.getMessage(), this.getX() + this.getWidth() / 2 - font.width(this.getMessage()) / 2,
+                    this.getY() + 2, textColor(lit ? NUMERAL_HOVER : DETAIL, f), false);
+        }
+
+        @Override
+        public void updateWidgetNarration(NarrationElementOutput output) {
+            this.defaultButtonNarrationText(output);
+        }
     }
 
     // ---------------------------------------------------------------- rows
@@ -274,7 +346,13 @@ public abstract class RitualScreen extends Screen {
             int nameColor = !this.active ? TEXT_DISABLED : lit ? TEXT_HOVER : TEXT;
             graphics.drawString(font, this.getMessage(), iconX + 24, textY, textColor(nameColor, f), lit);
 
-            if (option.detail() != null) {
+            if (option.cooldown() > 0.0F) {
+                int bx = x + w - 8 - COOLDOWN_BAR_WIDTH;
+                int by = y + h / 2 - 1;
+                graphics.fill(bx, by, bx + COOLDOWN_BAR_WIDTH, by + 3, withAlpha(0x2A0000, 0.9F * f));
+                graphics.fill(bx, by, bx + Math.max(1, (int) (COOLDOWN_BAR_WIDTH * option.cooldown())), by + 3,
+                        withAlpha(0xC41E1E, f));
+            } else if (option.detail() != null) {
                 int dx = x + w - 8 - font.width(option.detail());
                 graphics.drawString(font, option.detail(), dx, textY,
                         textColor(!this.active ? TEXT_DISABLED : lit ? DETAIL_HOVER : DETAIL, f), false);

@@ -56,6 +56,16 @@ public class ClientSetup {
     }
 
     @SubscribeEvent
+    public static void registerKeys(net.minecraftforge.client.event.RegisterKeyMappingsEvent event) {
+        event.register(ModKeys.WHEEL);
+    }
+
+    @SubscribeEvent
+    public static void registerOverlays(net.minecraftforge.client.event.RegisterGuiOverlaysEvent event) {
+        event.registerAboveAll("ritual_cooldowns", new RitualCooldownOverlay());
+    }
+
+    @SubscribeEvent
     public static void registerParticles(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticles.BLOOD_TRAIL.get(), BloodTrailParticle.Provider::new);
     }

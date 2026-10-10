@@ -57,8 +57,6 @@
   "gui.livro_das_sombras.livro_do_sangue.rituais": "Rituais menores",
   "gui.livro_das_sombras.rituais.title": "Rituais Menores",
   "item.livro_das_sombras.livro_do_sangue.carregado": "Livro do Sangue · %s",
-  "gui.livro_das_sombras.rituais.recarga": "%s s",
-  "message.livro_das_sombras.ritual.recarga": "%s: %s s",
   "gui.livro_das_sombras.livro_do_sangue.secoes": "Escolha uma seção",
   "gui.livro_das_sombras.livro_do_sangue.invocacoes.detail": "armas · Ser de Sangue",
   "gui.livro_das_sombras.livro_do_sangue.rituais.detail": "feitiços de sangue",
@@ -73,5 +71,11 @@
   "message.livro_das_sombras.ritual.vida_cheia": "%s não precisa do seu sangue.",
   "message.livro_das_sombras.ritual.troca_recebida": "%s te deu o próprio sangue.",
   "tooltip.livro_das_sombras.ritual": "Ritual: %s",
-  "tooltip.livro_das_sombras.ritual.uso": "Botão direito: lançar · Shift + botão direito: cancelar"
+  "tooltip.livro_das_sombras.ritual.uso": "Botão direito: lançar · Shift + botão direito: cancelar",
+  "gui.livro_das_sombras.voltar": "Voltar",
+  "gui.livro_das_sombras.ritual.hint_roda": "Teclas 1–%s · %s: roda · Esc para fechar",
+  "gui.livro_das_sombras.roda.title": "Roda de seleção",
+  "gui.livro_das_sombras.roda.hint": "Mova o mouse · solte %s",
+  "key.livro_das_sombras.roda": "Roda do Livro do Sangue",
+  "key.categories.livro_das_sombras": "Veritates"
 }

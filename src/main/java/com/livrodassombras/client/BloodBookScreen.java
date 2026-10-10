@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-/** The menu opened by the Livro do Sangue: the four weapons and the Ser de Sangue. Keys 1-5 choose directly. */
+/** Invocações (locked section): the four weapons and the Ser de Sangue. Keys 1-5 choose directly. */
 public class BloodBookScreen extends RitualScreen {
     static final ResourceLocation BEING_ICON =
             new ResourceLocation(LivroDasSombras.MOD_ID, "textures/mob_effect/ser_de_sangue.png");
@@ -31,6 +31,24 @@ public class BloodBookScreen extends RitualScreen {
     @Override
     protected Component subtitle() {
         return Component.translatable("gui.livro_das_sombras.livro_do_sangue.cost");
+    }
+
+    @Override
+    protected Component hint() {
+        return Component.translatable("gui.livro_das_sombras.ritual.hint_roda", this.options.size(),
+                ModKeys.WHEEL.getTranslatedKeyMessage());
+    }
+
+    @Override
+    protected Component backLabel() {
+        return Component.translatable("gui.livro_das_sombras.voltar");
+    }
+
+    @Override
+    protected void back() {
+        ModNetwork.CHANNEL.sendToServer(new com.livrodassombras.network.BookSectionPacket(
+                com.livrodassombras.ritual.RitualBook.SECTION_NONE));
+        net.minecraft.client.Minecraft.getInstance().setScreen(new BloodBookRootScreen());
     }
 
     @Override

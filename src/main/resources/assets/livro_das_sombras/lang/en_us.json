@@ -57,8 +57,6 @@
   "gui.livro_das_sombras.livro_do_sangue.rituais": "Rituais menores",
   "gui.livro_das_sombras.rituais.title": "Rituais Menores",
   "item.livro_das_sombras.livro_do_sangue.carregado": "Livro do Sangue · %s",
-  "gui.livro_das_sombras.rituais.recarga": "%s s",
-  "message.livro_das_sombras.ritual.recarga": "%s: %s s",
   "gui.livro_das_sombras.livro_do_sangue.secoes": "Choose a section",
   "gui.livro_das_sombras.livro_do_sangue.invocacoes.detail": "weapons · Blood Being",
   "gui.livro_das_sombras.livro_do_sangue.rituais.detail": "blood spells",
@@ -73,5 +71,11 @@
   "message.livro_das_sombras.ritual.vida_cheia": "%s doesn't need your blood.",
   "message.livro_das_sombras.ritual.troca_recebida": "%s gave you their blood.",
   "tooltip.livro_das_sombras.ritual": "Ritual: %s",
-  "tooltip.livro_das_sombras.ritual.uso": "Right-click: cast · Shift + right-click: cancel"
+  "tooltip.livro_das_sombras.ritual.uso": "Right-click: cast · Shift + right-click: cancel",
+  "gui.livro_das_sombras.voltar": "Back",
+  "gui.livro_das_sombras.ritual.hint_roda": "Keys 1–%s · %s: wheel · Esc to close",
+  "gui.livro_das_sombras.roda.title": "Selection wheel",
+  "gui.livro_das_sombras.roda.hint": "Move the mouse · release %s",
+  "key.livro_das_sombras.roda": "Livro do Sangue wheel",
+  "key.categories.livro_das_sombras": "Veritates"
 }

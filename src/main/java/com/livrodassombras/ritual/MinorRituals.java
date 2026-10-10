@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -63,13 +64,12 @@ public final class MinorRituals {
         player.level().playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.0F, 0.6F);
     }
 
-    public static void cast(ServerPlayer player, ItemStack book, MinorRitual ritual) {
+    /** Casts the ritual. On success it costs one use of the book and starts the ritual's cooldown. */
+    public static void cast(ServerPlayer player, ItemStack book, InteractionHand hand, MinorRitual ritual) {
         ServerLevel level = player.serverLevel();
-        long now = level.getGameTime();
-        long left = RitualBook.cooldownLeft(book, ritual, now);
-        if (left > 0L) {
-            player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual.recarga",
-                    ritual.displayName(), RitualBook.seconds(left)), true);
+        if (RitualCooldowns.left(player, ritual) > 0L) {
+            // The cooldown bar in the corner already says how long; just a dull click.
+            level.playSound(null, player.blockPosition(), SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 0.5F, 0.6F);
             return;
         }
 
@@ -79,7 +79,8 @@ public final class MinorRituals {
             case CORTE_SANGRENTO -> castSlash(player, level);
         };
         if (cast && !player.getAbilities().instabuild) {
-            RitualBook.startCooldown(book, ritual, now);
+            RitualCooldowns.start(player, ritual);
+            book.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
         }
     }
 

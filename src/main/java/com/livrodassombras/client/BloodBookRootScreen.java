@@ -1,6 +1,9 @@
 package com.livrodassombras.client;
 
+import com.livrodassombras.network.BookSectionPacket;
+import com.livrodassombras.network.ModNetwork;
 import com.livrodassombras.registry.ModItems;
+import com.livrodassombras.ritual.RitualBook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +32,8 @@ public class BloodBookRootScreen extends RitualScreen {
 
     @Override
     protected void choose(int index) {
-        Minecraft.getInstance().setScreen(index == 0 ? new BloodBookScreen() : new MinorRitualsScreen());
+        // The chosen section stays locked on the book until "Back".
+        ModNetwork.CHANNEL.sendToServer(new BookSectionPacket(index));
+        Minecraft.getInstance().setScreen(index == RitualBook.SECTION_INVOCACOES ? new BloodBookScreen() : new MinorRitualsScreen());
     }
 }

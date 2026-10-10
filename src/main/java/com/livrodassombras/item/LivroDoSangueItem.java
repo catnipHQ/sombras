@@ -20,8 +20,9 @@ import net.minecraftforge.fml.DistExecutor;
 
 /**
  * Upgraded Livro das Sombras. Right-click opens the book: I. Invocações (weapons and the Ser de Sangue)
- * or II. Rituais menores. Choosing a ritual charges the book (an eye opens on its cover):
- * right-click then casts the ritual, Shift + right-click cancels it.
+ * or II. Rituais menores. A chosen section stays locked (the book reopens on it) until "Back" is used.
+ * Choosing a ritual charges the book (an eye opens on its cover): right-click then casts it
+ * (costing one of the book's uses), Shift + right-click cancels it. The R wheel picks from the locked section.
  */
 public class LivroDoSangueItem extends LimitedBookItem {
     public LivroDoSangueItem(Properties properties) {
@@ -35,7 +36,8 @@ public class LivroDoSangueItem extends LimitedBookItem {
 
         if (charged == null) {
             if (level.isClientSide) {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHooks::openBloodBook);
+                int section = RitualBook.section(book);
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openBloodBook(section));
             }
             return InteractionResultHolder.consume(book);
         }
@@ -44,7 +46,7 @@ public class LivroDoSangueItem extends LimitedBookItem {
             if (player.isShiftKeyDown()) {
                 MinorRituals.cancel(player, book);
             } else {
-                MinorRituals.cast(serverPlayer, book, charged);
+                MinorRituals.cast(serverPlayer, book, hand, charged);
             }
         }
         return InteractionResultHolder.sidedSuccess(book, level.isClientSide);

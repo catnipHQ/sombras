@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ModNetwork {
-    private static final String PROTOCOL_VERSION = "4";
+    private static final String PROTOCOL_VERSION = "5";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(LivroDasSombras.MOD_ID, "main"),
@@ -23,5 +23,10 @@ public class ModNetwork {
                 CauldronChoicePacket::encode, CauldronChoicePacket::decode, CauldronChoicePacket::handle);
         CHANNEL.registerMessage(3, SelectRitualPacket.class,
                 SelectRitualPacket::encode, SelectRitualPacket::decode, SelectRitualPacket::handle);
+        CHANNEL.registerMessage(4, BookSectionPacket.class,
+                BookSectionPacket::encode, BookSectionPacket::decode, BookSectionPacket::handle);
+        CHANNEL.registerMessage(5, RitualCooldownSyncPacket.class,
+                RitualCooldownSyncPacket::encode, RitualCooldownSyncPacket::decode, RitualCooldownSyncPacket::handle,
+                java.util.Optional.of(net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT));
     }
 }
