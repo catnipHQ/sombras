@@ -2,6 +2,8 @@ package com.livrodassombras;
 
 import com.livrodassombras.entity.BloodBeingEntity;
 import com.livrodassombras.network.ModNetwork;
+import com.livrodassombras.registry.ModBlockEntities;
+import com.livrodassombras.registry.ModBlocks;
 import com.livrodassombras.registry.ModCreativeTabs;
 import com.livrodassombras.registry.ModEffects;
 import com.livrodassombras.registry.ModEntities;
@@ -20,6 +22,8 @@ public class LivroDasSombras {
     public LivroDasSombras() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModBlocks.BLOCKS.register(modBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModEntities.ENTITIES.register(modBus);
         ModSounds.SOUNDS.register(modBus);

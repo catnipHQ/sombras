@@ -37,5 +37,13 @@
   "message.livro_das_sombras.ritual_sem_sangue": "You don't have enough blood for this ritual.",
   "message.livro_das_sombras.ritual_prolongado": "The Blood Being will last 10 more minutes.",
   "message.livro_das_sombras.ritual_sacrificio": "Your blood strengthens the Blood Being.",
-  "message.livro_das_sombras.ritual_ja_feito": "This sacrifice has already been made."
+  "message.livro_das_sombras.ritual_ja_feito": "This sacrifice has already been made.",
+  "block.livro_das_sombras.caldeirao_ritualistico": "Caldeirão Ritualístico",
+  "message.livro_das_sombras.caldeirao.aceso": "The cauldron's flames awaken.",
+  "message.livro_das_sombras.caldeirao.apagado": "The cauldron must be lit with flint and steel.",
+  "message.livro_das_sombras.caldeirao.busca_carne": "Ele busca pela carne",
+  "message.livro_das_sombras.caldeirao.mais_carne": "Requires more meat. (%s)",
+  "message.livro_das_sombras.caldeirao.progresso": "Meat: %s",
+  "message.livro_das_sombras.caldeirao.completo": "The cauldron is complete.",
+  "gui.livro_das_sombras.caldeirao.subtitle": "Choose a book"
 }

@@ -7,6 +7,7 @@ import com.livrodassombras.item.BloodSpearItem;
 import com.livrodassombras.item.EspadaDeSangueItem;
 import com.livrodassombras.item.LivroDasSombrasItem;
 import com.livrodassombras.item.LivroDoSangueItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -22,6 +23,10 @@ public class ModItems {
 
     public static final RegistryObject<Item> LIVRO_DO_SANGUE = ITEMS.register("livro_do_sangue",
             () -> new LivroDoSangueItem(new Item.Properties().stacksTo(1)));
+
+    // Blocks
+    public static final RegistryObject<Item> CALDEIRAO_RITUALISTICO = ITEMS.register("caldeirao_ritualistico",
+            () -> new BlockItem(ModBlocks.CALDEIRAO_RITUALISTICO.get(), new Item.Properties()));
 
     // Summoned weapons
     public static final RegistryObject<Item> ESPADA_DE_SANGUE = ITEMS.register("espada_de_sangue",

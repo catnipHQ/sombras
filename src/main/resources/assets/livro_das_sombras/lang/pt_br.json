@@ -37,5 +37,13 @@
   "message.livro_das_sombras.ritual_sem_sangue": "Você não tem sangue suficiente para este ritual.",
   "message.livro_das_sombras.ritual_prolongado": "O Ser de Sangue vai durar mais 10 minutos.",
   "message.livro_das_sombras.ritual_sacrificio": "Seu sangue fortalece o Ser de Sangue.",
-  "message.livro_das_sombras.ritual_ja_feito": "Este sacrifício já foi feito."
+  "message.livro_das_sombras.ritual_ja_feito": "Este sacrifício já foi feito.",
+  "block.livro_das_sombras.caldeirao_ritualistico": "Caldeirão Ritualístico",
+  "message.livro_das_sombras.caldeirao.aceso": "As chamas do caldeirão despertam.",
+  "message.livro_das_sombras.caldeirao.apagado": "O caldeirão precisa ser aceso com isqueiro.",
+  "message.livro_das_sombras.caldeirao.busca_carne": "Ele busca pela carne",
+  "message.livro_das_sombras.caldeirao.mais_carne": "Precisa de mais carne. (%s)",
+  "message.livro_das_sombras.caldeirao.progresso": "Carne: %s",
+  "message.livro_das_sombras.caldeirao.completo": "O caldeirão está completo.",
+  "gui.livro_das_sombras.caldeirao.subtitle": "Escolha o livro"
 }

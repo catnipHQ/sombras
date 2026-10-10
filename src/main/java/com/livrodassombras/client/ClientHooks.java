@@ -8,6 +8,10 @@ public class ClientHooks {
         Minecraft.getInstance().setScreen(new BloodBookScreen());
     }
 
+    public static void openCauldronMenu(net.minecraft.core.BlockPos pos) {
+        Minecraft.getInstance().setScreen(new RitualCauldronScreen(pos));
+    }
+
     public static void openBeingMenu(int entityId) {
         Minecraft.getInstance().setScreen(new BloodBeingScreen(entityId));
     }

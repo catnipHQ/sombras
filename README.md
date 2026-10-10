@@ -1,4 +1,4 @@
-# Veritates 1.0.5
+# Veritates 1.0.7
 
 Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**.
 
@@ -17,6 +17,23 @@ Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombra
 | Lança de Sangue | 6 | Segure o botão direito e solte para arremessar como um tridente. Ela volta sozinha para você depois de acertar ou de cravar em um bloco. O arremesso aplica Lentidão por 1,5 s e deixa o alvo sangrando pelo mesmo tempo (o golpe corpo a corpo não). |
 | Martelo de Sangue | 10 | Lento (velocidade de ataque 0.6). Segure o botão direito para carregar (1 s) e solte: onda de choque que acerta todos em até 4 blocos com 5 de dano e empurra. Cada golpe custa 3 pontos de vida (1,5 coração). Recarga de 2 s. |
 | Arco de Sangue | 7 | Não gasta flechas, mas cada flecha custa 1 coração. 7 de dano com o arco totalmente puxado, e o tiro totalmente puxado é crítico (bônus aleatório do Minecraft, até 11). A flecha não pode ser recolhida. |
+
+## Caldeirão Ritualístico
+
+É assim que se fabricam os livros. Receita (bancada):
+
+```
+Lingote de ferro   ·              Lingote de ferro
+Obsidiana          ·              Obsidiana
+Bloco de ferro     Obsidiana      Bloco de ferro
+```
+
+1. **Acenda** o caldeirão com um isqueiro (pederneira e aço).
+2. **Botão direito** nele: você perde **2 corações** (4 de vida) e ele enche um pouco de sangue. Aparece no chat: *"Ele busca pela carne"*.
+3. **Jogue carne** dentro dele (tecla Q em cima, ou botão direito com a carne na mão). Qualquer carne serve, inclusive carne podre; quanto mais saciedade a carne dá, mais ela enche. Cada peça vale 1 + a saciedade dela, e o caldeirão completa com 60. Na prática: uns 34 de carne podre, 22 de carne crua de vaca, 8 de frango assado ou 5 de bife. Antes de completar, o botão direito mostra *"Precisa de mais carne"* com a porcentagem.
+4. Ao chegar em 100%, aparece no chat *"O caldeirão está completo."*. **Botão direito** abre o menu: **Livro do Sangue** ou **Livro das Sombras**. Escolher um livro esvazia e apaga o caldeirão; para outro livro, faça o ritual de novo.
+
+Quebre com picareta de ferro ou melhor. Ao quebrar, o progresso se perde: ele volta vazio e apagado.
 
 ## Ser de Sangue
 
@@ -57,7 +74,7 @@ Requer JDK 17 e Gradle 8.1.1.
 
 ```bash
 gradle wrapper --gradle-version 8.1.1   # só na primeira vez (gera o ./gradlew)
-./gradlew build                         # jar em build/libs/veritates-1.0.5.jar
+./gradlew build                         # jar em build/libs/veritates-1.0.7.jar
 ./gradlew runClient                     # abre o Minecraft para testar
 ```
 
