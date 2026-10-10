@@ -16,11 +16,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 
-/** Right-click to summon the Espada de Sangue (costs 5 hearts + 1 second of Nausea). */
+/** Right-click to summon the Espada de Sangue (costs 5 hearts + 2 seconds of Nausea). */
 public class LivroDasSombrasItem extends Item {
     private static final int COOLDOWN_TICKS = 20 * 5;  // 5 seconds
     private static final float BLOOD_COST = 10.0F;     // 10 health points = 5 hearts
-    private static final int NAUSEA_TICKS = 20;        // 1 second
+    private static final int NAUSEA_TICKS = 40;        // 2 seconds
 
     public LivroDasSombrasItem(Properties properties) {
         super(properties);
@@ -40,7 +40,7 @@ public class LivroDasSombrasItem extends Item {
             return InteractionResultHolder.fail(book);
         }
 
-        // The sword can't be dropped, so there must be room for it in the inventory.
+        // Dropped swords vanish, so there must be room for it in the inventory.
         if (player.getInventory().getFreeSlot() == -1) {
             warn(player, "message.livro_das_sombras.inventario_cheio");
             return InteractionResultHolder.fail(book);
