@@ -1,12 +1,13 @@
-# Veritates 1.0.11
+# Veritates 1.1.0
 
-Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**.
+Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**. Desde a 1.1.0 há um segundo caminho, o **Livro do Tempo**.
 
 ## Livros
 
 | Item | Descrição |
 |------|-----------|
 | Livro das Sombras | Botão direito invoca a Espada de Sangue. |
+| Livro do Tempo | O caminho do tempo: livro preto com um relógio branco na capa. Funciona igual ao Livro do Sangue (duas seções, roda R, rituais preparados, 5 usos), com o menu em preto e cinza, e **paga em fome** em vez de vida. Por enquanto só existe no modo criativo. Veja abaixo. |
 | Livro do Sangue | Botão direito abre o livro em duas seções: **I. Invocações** (espada, lança, martelo, arco ou Ser de Sangue, como antes) e **II. Rituais menores** (feitiços de sangue, veja abaixo). Não substitui o Livro das Sombras, os dois existem. |
 
 ### Seções travadas e roda de seleção
@@ -24,6 +25,10 @@ Com uma seção travada e o livro na mão, a tecla **R** abre uma **roda de sele
 | Martelo de Sangue | 10 | Lento (velocidade de ataque 0.6). Segure o botão direito para carregar (1 s) e solte: onda de choque que acerta todos em até 4 blocos com 5 de dano e empurra. Cada golpe custa 3 pontos de vida (1,5 coração). Recarga de 2 s. |
 | Arco de Sangue | 7 | Não gasta flechas, mas cada flecha custa 1 coração. 7 de dano com o arco totalmente puxado, e o tiro totalmente puxado é crítico (bônus aleatório do Minecraft, até 11). A flecha não pode ser recolhida. |
 
+### Criaturas sem sangue
+
+Esqueletos (de qualquer tipo), o Wither, cavalos esqueleto e os Esqueletinhos do Tempo são feitos de osso: **não sangram**. A Espada de Sangue não causa Hemorragia neles, a Lança não os deixa sangrando, e o **Dilacerar** não é lançado neles (nada é cobrado). O Corte sangrento ainda os acerta, mas solta lascas de osso em vez de sangue. Zumbis e piglins zumbificados continuam sangrando. A lista é a tag de entidades `livro_das_sombras:sem_sangue`, que um datapack pode ampliar.
+
 ## Rituais menores (Livro do Sangue)
 
 Escolher um ritual no menu **prepara** o livro: aparece um olho na capa, ele brilha e o nome muda para "Livro do Sangue · Dilacerar". Com o livro preparado:
@@ -40,6 +45,30 @@ Os rituais custam vida (nunca o suficiente para matar) e **cada lançamento gast
 | Corte sangrento | 4 ♥ | Um corte de sangue sai em linha reta por 10 blocos (para na primeira parede) e acerta tudo no caminho com 7 ♥ de dano (a armadura reduz) e um empurrão. Não acerta os seus animais nem o seu Ser de Sangue. | 40 s |
 
 Sem alvo na mira, Dilacerar e Troca de sangue não são lançados e nada é cobrado (nem vida, nem uso do livro).
+
+## Livro do Tempo
+
+Mesmo funcionamento do Livro do Sangue (seções travadas, roda R, Shift + botão direito cancela o ritual preparado, 5 usos, recarga de 5 s nas invocações), mas o menu é preto e cinza, com um mostrador de relógio no fundo, e o preço é **fome** (2 pontos = 1 coxinha). Cada invocação dá 2 s de **Lentidão** em vez de Náusea. Ainda não dá para fabricar: só pela aba criativa.
+
+### Invocações
+
+| Invocação | Custo | Efeito |
+|-----------|-------|--------|
+| Esqueletinhos | 3 de fome | Três esqueletos bebês com arco, por **4 minutos** (o tempo aparece como efeito no inventário). Um pouco mais fortes que um esqueleto: 22 de vida (esqueleto: 20), 2 de armadura, mais rápidos e flechas com +0,5 de dano. Seguem e protegem você como o Ser de Sangue (atiram em quem você atacar e em quem atacar você), sem modo de guarda nem menu. Não queimam no sol. As flechas deles atravessam você, seus animais e suas criaturas. Um grupo por vez; somem se você morrer ou ficar fora por mais de 5 s. |
+| Foice do Tempo | 1,5 de fome | Dano baixo, igual à enxada de diamante (1 de dano, e ara a terra como enxada). **Botão direito em plantações** adianta o tempo em todas as plantas numa área 3×3 (um bloco acima e abaixo também): cada planta tem **50% de chance de crescer na hora e 50% de morrer**. Vale para trigo, cenoura, batata, beterraba, caules de abóbora e melancia, frutas doces, cacau e fungo do Nether. Depois do uso a foice some e só pode ser invocada de novo depois de **2 minutos** (barra cinza no canto da tela). |
+| Relógio Negro | 2,5 de fome | **3 cargas.** Botão direito mirando uma criatura a até 12 blocos: ela fica **parada no tempo por 2 s** (não anda, não olha, não ataca; um creeper prestes a explodir desarma). Em **jogadores e chefes** (Wither, Dragão do Fim) só dá **Lentidão III por 3 s**. 3 s de recarga entre cargas; depois da última, o relógio some. |
+
+A Foice e o Relógio seguem as regras das armas de sangue: uma arma por vez (somando os dois livros), somem se forem largadas, guardadas em baú ou se você morrer.
+
+### Rituais menores
+
+| Ritual | Custo | Efeito | Recarga |
+|--------|-------|--------|---------|
+| Lentidão | 1 de fome | Mire em uma criatura ou jogador a até 12 blocos. Leva **1 s para conjurar** (um mostrador de partículas se fecha em volta do alvo); depois dá **Lentidão II por 8 s** no alvo e em quem estiver a até 2,5 blocos dele (menos você e suas criaturas). | 15 s |
+| Murchar | 2 de fome | Mire em um alvo a até 10 blocos. Leva **1,5 s para conjurar**; depois dá **Murchar II por 6 s** (6 de dano no total) e **Fraqueza por 6 s**. | 25 s |
+| Reverter Passos | marcar: grátis · voltar: 1,5 de fome | O primeiro uso **marca o lugar** onde você está. O próximo uso **leva você de volta** à marca. A marca vale por 5 minutos e só funciona a até **48 blocos**, na mesma dimensão. A partir de **40 blocos** aparece um aviso e toca um som grave; passando de 48 a marca se desfaz. Só você vê a marca (partículas cinza no chão) e, no canto da tela, a distância e o tempo restante. Marcar não gasta uso do livro nem inicia a recarga; voltar sim. | 30 s |
+
+Se o alvo morrer, sumir ou se afastar demais durante a conjuração, o ritual se desfaz (o custo já foi pago). Como a marca do Reverter Passos fica com você, dá para marcar, trocar para outro ritual na roda, lutar, e voltar para o Reverter Passos depois.
 
 ## Caldeirão Ritualístico
 
@@ -100,7 +129,7 @@ Requer JDK 17 e Gradle 8.1.1.
 
 ```bash
 gradle wrapper --gradle-version 8.1.1   # só na primeira vez (gera o ./gradlew)
-./gradlew build                         # jar em build/libs/veritates-1.0.11.jar
+./gradlew build                         # jar em build/libs/veritates-1.1.0.jar
 ./gradlew runClient                     # abre o Minecraft para testar
 ```
 
@@ -121,6 +150,8 @@ Use apenas áudios que você tenha direito de distribuir.
 1. Crie a classe em `item/` e registre em `registry/ModItems.java`.
 2. Adicione-a em `summon/BloodWeapons.menuOrder()`: ela entra no menu do Livro do Sangue e já segue todas as regras (uma por vez, some ao largar, etc.).
 3. Crie o modelo em `models/item/`, a textura em `textures/item/` e os nomes em `lang/`.
+
+**Nova invocação do Livro do Tempo:** adicione-a em `summon/TimeSummon` e trate-a em `summon/TimeSummoning`. **Novo ritual menor:** adicione-o em `ritual/MinorRitual` com o caminho (`BLOOD` ou `TIME`) e trate-o em `MinorRituals.cast`.
 
 **Novo item qualquer:** registre em `ModItems` e adicione em `displayItems(...)` de `registry/ModCreativeTabs.java`.
 
