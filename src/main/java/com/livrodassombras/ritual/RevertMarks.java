@@ -28,8 +28,8 @@ import net.minecraftforge.network.PacketDistributor;
  */
 @Mod.EventBusSubscriber(modid = LivroDasSombras.MOD_ID)
 public final class RevertMarks {
-    public static final double RANGE = 20.0D;
-    public static final double WARN_RANGE = 16.0D;
+    public static final double RANGE = 25.0D;
+    public static final double WARN_RANGE = 20.0D;
     public static final int LIFETIME_TICKS = 20 * 60 * 5; // 5 minutes
 
     private static final String TAG = "veritates_passo";
