@@ -1,0 +1,8 @@
+{
+  "itemGroup.livro_das_sombras": "ID",
+  "item.livro_das_sombras.livro_das_sombras": "Livro das Sombras",
+  "item.livro_das_sombras.espada_de_sangue": "Espada de Sangue",
+  "message.livro_das_sombras.invocada": "The Espada de Sangue has been summoned.",
+  "message.livro_das_sombras.ja_invocada": "You already own an Espada de Sangue.",
+  "subtitles.livro_das_sombras.blood_summon": "Blood magic"
+}

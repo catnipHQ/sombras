@@ -1,0 +1,14 @@
+{
+  "blood_summon": {
+    "subtitle": "subtitles.livro_das_sombras.blood_summon",
+    "sounds": [
+      { "name": "minecraft:entity.evoker.prepare_summon", "type": "event", "pitch": 0.6, "volume": 1.0 }
+    ]
+  },
+  "blood_squelch": {
+    "subtitle": "subtitles.livro_das_sombras.blood_summon",
+    "sounds": [
+      { "name": "minecraft:entity.slime.squish", "type": "event", "pitch": 0.5, "volume": 0.9 }
+    ]
+  }
+}

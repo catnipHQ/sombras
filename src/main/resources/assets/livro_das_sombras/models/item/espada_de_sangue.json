@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": { "layer0": "livro_das_sombras:item/espada_de_sangue" }
+}
