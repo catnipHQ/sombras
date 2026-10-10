@@ -7,6 +7,10 @@ import com.livrodassombras.registry.ModEntities;
 import com.livrodassombras.registry.ModItems;
 import com.livrodassombras.registry.ModParticles;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import com.livrodassombras.ritual.RitualBook;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -41,6 +45,14 @@ public class ClientSetup {
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tintIndex) -> tintIndex == 0 ? CAULDRON_PURPLE : -1,
                 ModItems.CALDEIRAO_RITUALISTICO.get());
+    }
+
+    /** The Livro do Sangue shows an eye on its cover while a ritual is prepared. */
+    @SubscribeEvent
+    public static void clientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> ItemProperties.register(ModItems.LIVRO_DO_SANGUE.get(),
+                new ResourceLocation(LivroDasSombras.MOD_ID, "carregado"),
+                (stack, level, entity, seed) -> RitualBook.charged(stack) != null ? 1.0F : 0.0F));
     }
 
     @SubscribeEvent

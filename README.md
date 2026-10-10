@@ -7,7 +7,7 @@ Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombra
 | Item | Descrição |
 |------|-----------|
 | Livro das Sombras | Botão direito invoca a Espada de Sangue. |
-| Livro do Sangue | Botão direito abre um menu ritual para escolher: espada, lança, martelo, arco ou Ser de Sangue (clique ou teclas 1–5). Não substitui o Livro das Sombras, os dois existem. |
+| Livro do Sangue | Botão direito abre o livro em duas seções: **I. Invocações** (espada, lança, martelo, arco ou Ser de Sangue, como antes) e **II. Rituais menores** (feitiços de sangue, veja abaixo). Não substitui o Livro das Sombras, os dois existem. |
 
 ## Armas
 
@@ -17,6 +17,23 @@ Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombra
 | Lança de Sangue | 6 | Segure o botão direito e solte para arremessar como um tridente. Ela volta sozinha para você depois de acertar ou de cravar em um bloco. O arremesso aplica Lentidão por 2 s e deixa o alvo sangrando pelo mesmo tempo (o golpe corpo a corpo não). |
 | Martelo de Sangue | 10 | Lento (velocidade de ataque 0.6). Segure o botão direito para carregar (1 s) e solte: onda de choque que acerta todos em até 4 blocos com 5 de dano e empurra. Cada golpe custa 3 pontos de vida (1,5 coração). Recarga de 2 s. |
 | Arco de Sangue | 7 | Não gasta flechas, mas cada flecha custa 1 coração. 7 de dano com o arco totalmente puxado, e o tiro totalmente puxado é crítico (bônus aleatório do Minecraft, até 11). A flecha não pode ser recolhida. |
+
+## Rituais menores (Livro do Sangue)
+
+Escolher um ritual no menu **prepara** o livro: aparece um olho na capa, ele brilha e o nome muda para "Livro do Sangue · Dilacerar". Com o livro preparado:
+
+- **Botão direito** lança o ritual. O livro continua preparado, então dá para lançar de novo quando a recarga acabar.
+- **Shift + botão direito** cancela e o livro volta ao normal (e o botão direito volta a abrir o menu).
+
+Os rituais custam vida (nunca o suficiente para matar), não gastam usos do livro, e cada um tem sua própria recarga, guardada no livro (o menu mostra quanto falta). No modo criativo não custam vida nem têm recarga.
+
+| Ritual | Custo | Efeito | Recarga |
+|--------|-------|--------|---------|
+| Dilacerar | 2,5 ♥ | Mire em uma criatura ou jogador a até 8 blocos. Depois de 1 s de aviso (sangue girando em volta do alvo), ele sofre 1 de dano a cada meio segundo por 6 s: 6 ♥ no total, ignorando armadura. Se ele morrer antes, acaba. | 20 s |
+| Troca de sangue | 3 ♥ | Mire em um jogador ou criatura a até 8 blocos: ele recupera 4 ♥. Um fio de sangue liga vocês. Não funciona se ele já estiver com a vida cheia (nada é cobrado). | 10 s |
+| Corte sangrento | 4 ♥ | Um corte de sangue sai em linha reta por 10 blocos (para na primeira parede) e acerta tudo no caminho com 7 ♥ de dano (a armadura reduz) e um empurrão. Não acerta os seus animais nem o seu Ser de Sangue. | 40 s |
+
+Sem alvo na mira, Dilacerar e Troca de sangue não são lançados e nada é cobrado.
 
 ## Caldeirão Ritualístico
 

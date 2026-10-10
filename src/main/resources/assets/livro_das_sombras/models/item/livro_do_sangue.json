@@ -1,4 +1,14 @@
 {
   "parent": "minecraft:item/generated",
-  "textures": { "layer0": "livro_das_sombras:item/livro_do_sangue" }
+  "textures": {
+    "layer0": "livro_das_sombras:item/livro_do_sangue"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "livro_das_sombras:carregado": 1
+      },
+      "model": "livro_das_sombras:item/livro_do_sangue_carregado"
+    }
+  ]
 }
