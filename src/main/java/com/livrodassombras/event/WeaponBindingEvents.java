@@ -7,6 +7,7 @@ import com.livrodassombras.summon.BloodBond;
 import net.minecraft.server.level.ServerPlayer;
 import com.livrodassombras.registry.ModSounds;
 import com.livrodassombras.summon.BloodWeapons;
+import com.livrodassombras.summon.TimeSummoning;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -51,7 +52,11 @@ public class WeaponBindingEvents {
 
         event.setCanceled(true);
         if (event.getLevel() instanceof ServerLevel serverLevel) {
-            bloodPoof(serverLevel, itemEntity.getX(), itemEntity.getY() + 0.2, itemEntity.getZ());
+            if (BloodWeapons.isTime(itemEntity.getItem())) {
+                TimeSummoning.vanish(serverLevel, itemEntity.getX(), itemEntity.getY() + 0.2, itemEntity.getZ());
+            } else {
+                bloodPoof(serverLevel, itemEntity.getX(), itemEntity.getY() + 0.2, itemEntity.getZ());
+            }
         }
     }
 
@@ -75,18 +80,24 @@ public class WeaponBindingEvents {
         }
 
         boolean removed = false;
+        boolean time = false;
         for (Slot slot : menu.slots) {
             if (slot.container == player.getInventory()) {
                 continue; // the player's own inventory is fine
             }
             if (BloodWeapons.is(slot.getItem())) {
+                time |= BloodWeapons.isTime(slot.getItem());
                 slot.set(ItemStack.EMPTY);
                 removed = true;
             }
         }
 
         if (removed && player.level() instanceof ServerLevel serverLevel) {
-            bloodPoof(serverLevel, player.getX(), player.getY() + 1.0, player.getZ());
+            if (time) {
+                TimeSummoning.vanish(serverLevel, player.getX(), player.getY() + 1.0, player.getZ());
+            } else {
+                bloodPoof(serverLevel, player.getX(), player.getY() + 1.0, player.getZ());
+            }
             player.displayClientMessage(Component.translatable("message.livro_das_sombras.espada_dissipada"), true);
         }
     }

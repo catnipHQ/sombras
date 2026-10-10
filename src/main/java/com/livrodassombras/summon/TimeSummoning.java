@@ -4,6 +4,7 @@ import com.livrodassombras.entity.TimeSkeletonEntity;
 import com.livrodassombras.registry.ModSounds;
 import com.livrodassombras.ritual.RitualCooldowns;
 import com.livrodassombras.ritual.TimeRituals;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -87,7 +88,27 @@ public final class TimeSummoning {
         return true;
     }
 
-    /** Grey puff and a dry tick: a time item or creature appearing or vanishing. */
+    /**
+     * A time summon ending (skeleton's time up, scythe spent, clock out of charges, item dropped or stored):
+     * the same clock face the minor rituals draw, closing in for a moment, with the hands pointing up, and a
+     * rewinding shimmer; heard as the low fading tone of Lentidão plus a last tick.
+     */
+    public static void vanish(ServerLevel level, double x, double y, double z) {
+        double r = 0.8D;
+        for (int i = 0; i < 12; i++) {
+            double a = i * Math.PI / 6.0D;
+            level.sendParticles(TimeRituals.GREY, x + Math.cos(a) * r, y, z + Math.sin(a) * r, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            level.sendParticles(TimeRituals.GREY, x + Math.cos(a) * r * 0.55D, y, z + Math.sin(a) * r * 0.55D, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
+        for (int i = 1; i <= 4; i++) {
+            level.sendParticles(TimeRituals.DARK, x, y + i * 0.12D, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
+        level.sendParticles(ParticleTypes.REVERSE_PORTAL, x, y, z, 20, 0.3D, 0.4D, 0.3D, 0.02D);
+        level.playSound(null, x, y, z, SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 0.7F, 1.4F);
+        level.playSound(null, x, y, z, SoundEvents.NOTE_BLOCK_HAT.value(), SoundSource.PLAYERS, 0.6F, 1.0F);
+    }
+
+    /** Grey puff and a dry tick: a time item or creature appearing. */
     public static void poof(ServerLevel level, double x, double y, double z) {
         level.sendParticles(TimeRituals.GREY, x, y, z, 25, 0.3D, 0.3D, 0.3D, 0.02D);
         level.sendParticles(TimeRituals.DARK, x, y, z, 10, 0.3D, 0.3D, 0.3D, 0.02D);

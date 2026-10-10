@@ -40,6 +40,11 @@ public final class BloodWeapons {
                 || stack.is(ModItems.FOICE_DO_TEMPO.get()) || stack.is(ModItems.RELOGIO_NEGRO.get()));
     }
 
+    /** The Livro do Tempo's items: they vanish the Time way, not in blood. */
+    public static boolean isTime(ItemStack stack) {
+        return stack.is(ModItems.FOICE_DO_TEMPO.get()) || stack.is(ModItems.RELOGIO_NEGRO.get());
+    }
+
     /** True if the player carries any summoned weapon (hotbar, inventory, armor or offhand). */
     public static boolean hasAny(Player player) {
         Inventory inventory = player.getInventory();

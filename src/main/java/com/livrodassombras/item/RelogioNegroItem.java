@@ -68,7 +68,7 @@ public class RelogioNegroItem extends Item {
         player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
         stack.hurtAndBreak(1, player, p -> {
             p.broadcastBreakEvent(hand);
-            TimeSummoning.poof(serverLevel, p.getX(), p.getY() + 1.0D, p.getZ());
+            TimeSummoning.vanish(serverLevel, p.getX(), p.getY() + 1.0D, p.getZ());
         });
         return InteractionResultHolder.success(stack);
     }

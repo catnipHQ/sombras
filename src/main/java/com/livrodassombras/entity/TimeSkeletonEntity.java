@@ -3,6 +3,7 @@ package com.livrodassombras.entity;
 import com.livrodassombras.registry.ModEffects;
 import com.livrodassombras.registry.ModEntities;
 import com.livrodassombras.ritual.TimeRituals;
+import com.livrodassombras.summon.TimeSummoning;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
@@ -151,11 +152,10 @@ public class TimeSkeletonEntity extends TamableAnimal implements RangedAttackMob
         }
     }
 
-    /** Ends the skeleton in a puff of grey dust (time up, owner gone). */
+    /** Ends the skeleton with the Time path's vanishing (time up, owner gone). */
     public void dissipate() {
         if (this.level() instanceof ServerLevel level) {
-            level.sendParticles(TimeRituals.GREY, this.getX(), this.getY() + 0.5D, this.getZ(), 25, 0.2D, 0.4D, 0.2D, 0.02D);
-            level.playSound(null, this.blockPosition(), SoundEvents.BONE_BLOCK_BREAK, SoundSource.NEUTRAL, 0.8F, 1.4F);
+            TimeSummoning.vanish(level, this.getX(), this.getY() + 0.4D, this.getZ());
         }
         this.discard();
     }

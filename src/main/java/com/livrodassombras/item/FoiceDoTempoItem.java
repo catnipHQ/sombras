@@ -94,7 +94,7 @@ public class FoiceDoTempoItem extends HoeItem {
 
         // The scythe is spent: it vanishes, and its summon waits 2 minutes (not in creative).
         context.getItemInHand().shrink(1);
-        TimeSummoning.poof(serverLevel, player.getX(), player.getY() + 1.0D, player.getZ());
+        TimeSummoning.vanish(serverLevel, player.getX(), player.getY() + 1.0D, player.getZ());
         if (player instanceof ServerPlayer serverPlayer && !player.getAbilities().instabuild) {
             RitualCooldowns.start(serverPlayer, TimeSummon.FOICE.id(), TimeSummon.FOICE.cooldownTicks());
         }
