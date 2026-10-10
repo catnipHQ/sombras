@@ -28,9 +28,9 @@ Criatura invocada pelo Livro do Sangue (mesmo custo: 5 corações e Náusea).
 - **Botão direito** nele ativa o **modo de guarda** (mensagem no chat): ele fica parado no lugar, mas continua revidando se você atacar ou for atacado, e depois volta ao posto. Clique de novo para ele voltar a seguir.
 - Nunca ataca quem o invocou (nem os seus animais domesticados).
 - **Shift + botão direito** nele (só quem o invocou) abre o menu ritual:
-  1. **Prolongar:** custa 9,5 corações e o tempo restante volta para 10 minutos.
-  2. **Desfazer:** ele morre na hora.
-  3. **Sacrifício:** 3 corações saem da sua barra de vida (vida máxima) até ele morrer. Em troca ele ganha +5 de dano, +6 de armadura, +2 de resistência de armadura e resiste a empurrões. Uma vez por criatura.
+  1. **Prolongar:** custa 9,5 corações e corta 2 corações da sua vida máxima até ele morrer (acumula a cada uso); o tempo restante volta para 10 minutos.
+  2. **Morra:** mata a criatura na hora.
+  3. **Fortalecer:** 3 corações saem da sua barra de vida (vida máxima) até ele morrer. Em troca ele ganha +5 de dano, +6 de armadura, +2 de resistência de armadura e resiste a empurrões. Uma vez por criatura.
 - Só um Ser de Sangue por vez. Ele se dissipa se você morrer, ou se você sair do jogo ou trocar de dimensão por mais de 5 s.
 
 ## Regras de invocação (valem para os dois livros)

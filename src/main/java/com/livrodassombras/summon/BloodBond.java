@@ -25,9 +25,13 @@ import net.minecraft.world.entity.player.Player;
 public final class BloodBond {
     private static final String TAG = "veritates_ser_de_sangue";
     private static final UUID SACRIFICE_ID = UUID.fromString("5b1c3e2a-7d4f-4a8e-9c61-2f0d8b7a4e13");
+    private static final UUID PROLONG_ID = UUID.fromString("8e2f4a61-3c7b-4d19-a0e5-6b9d1f2c7a48");
 
     /** 3 hearts. */
     public static final float SACRIFICE_HEALTH = 6.0F;
+
+    /** 2 hearts of max health for each Prolongar, until the creature dies. */
+    public static final float PROLONG_HEALTH = 4.0F;
 
     private BloodBond() {}
 
@@ -63,12 +67,39 @@ public final class BloodBond {
         AttributeInstance maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
         if (maxHealth != null) {
             maxHealth.removeModifier(SACRIFICE_ID);
+            maxHealth.removeModifier(PROLONG_ID);
         }
     }
 
     public static boolean hasSacrificed(Player player) {
         AttributeInstance maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
         return maxHealth != null && maxHealth.getModifier(SACRIFICE_ID) != null;
+    }
+
+    public static boolean hasProlongCut(Player player) {
+        AttributeInstance maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
+        return maxHealth != null && maxHealth.getModifier(PROLONG_ID) != null;
+    }
+
+    /** The player must keep at least 1 heart of max health after Prolongar cuts 2 more. */
+    public static boolean canProlongCut(Player player) {
+        return player.getMaxHealth() - PROLONG_HEALTH >= 2.0F;
+    }
+
+    /** Takes 2 more hearts off the player's health bar (stacks with each Prolongar) until the link is released. */
+    public static void applyProlongCut(Player player) {
+        AttributeInstance maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
+        if (maxHealth == null) {
+            return;
+        }
+        AttributeModifier old = maxHealth.getModifier(PROLONG_ID);
+        double total = (old == null ? 0.0D : old.getAmount()) - PROLONG_HEALTH;
+        maxHealth.removeModifier(PROLONG_ID);
+        maxHealth.addPermanentModifier(new AttributeModifier(PROLONG_ID, "Prolongar",
+                total, AttributeModifier.Operation.ADDITION));
+        if (player.getHealth() > player.getMaxHealth()) {
+            player.setHealth(player.getMaxHealth());
+        }
     }
 
     /** The player must keep at least 1 heart of max health after the sacrifice. */
@@ -93,6 +124,7 @@ public final class BloodBond {
     public static void check(ServerPlayer player) {
         boolean linked = player.getPersistentData().hasUUID(TAG)
                 || hasSacrificed(player)
+                || hasProlongCut(player)
                 || player.hasEffect(ModEffects.SER_DE_SANGUE.get());
         if (linked && find(player) == null) {
             release(player);

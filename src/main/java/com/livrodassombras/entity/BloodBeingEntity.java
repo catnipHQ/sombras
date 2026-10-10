@@ -58,8 +58,8 @@ import org.joml.Vector3f;
  *   <li>Lives for 2 minutes; the summoner sees the remaining time as a status effect.</li>
  *   <li>Follows and defends its owner like a wolf: attacks whatever the owner attacks or whatever hurts the owner.</li>
  *   <li>Right-click toggles guard mode: it stays at its post, still defends, then returns to the post.</li>
- *   <li>Shift + right-click (owner only) opens the ritual menu: prolong (9.5 hearts, 10 minutes),
- *       undo (dies at once) and sacrifice (3 max-health hearts until it dies, for +5 damage and armor).</li>
+ *   <li>Shift + right-click (owner only) opens the ritual menu: Prolongar (9.5 hearts and 2 max-health
+ *       hearts until it dies, 10 minutes), Morra (dies at once) and Fortalecer (3 max-health hearts until it dies, for +5 damage and armor).</li>
  *   <li>Never attacks its owner, its owner's pets or its owner's other creatures.</li>
  * </ul>
  */
@@ -232,12 +232,17 @@ public class BloodBeingEntity extends TamableAnimal {
 
     // ---------------------------------------------------------------- rituals (owner's menu)
 
-    /** Prolong: 9.5 hearts for 10 more minutes of life (the timer is set to 10:00). */
+    /**
+     * Prolongar: 9.5 hearts, plus 2 max-health hearts until the creature dies (stacks each time),
+     * for 10 more minutes of life (the timer is set to 10:00).
+     */
     public void ritualProlong(Player player) {
-        if (!BloodPrice.pay(player, PROLONG_COST)) {
+        boolean creative = player.getAbilities().instabuild;
+        if ((!creative && !BloodBond.canProlongCut(player)) || !BloodPrice.pay(player, PROLONG_COST)) {
             player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual_sem_sangue"), true);
             return;
         }
+        BloodBond.applyProlongCut(player);
         this.lifeTicks = PROLONG_TICKS;
         this.entityData.set(DATA_LIFE, this.lifeTicks);
         this.ritualEffects(1.0F);

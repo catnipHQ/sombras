@@ -13,7 +13,7 @@ import net.minecraft.world.item.Items;
 
 /**
  * The Ser de Sangue's ritual menu (Shift + right-click, summoner only):
- * I. Prolong: 9.5 hearts for 10 minutes. II. Undo: dies at once. III. Sacrifice: 3 hearts for strength.
+ * I. Prolongar: 9.5 hearts and -2 max hearts for 10 minutes. II. Morra: dies at once. III. Fortalecer: 3 hearts for strength.
  * The server checks everything again; disabled options just show what can't be done right now.
  */
 public class BloodBeingScreen extends RitualScreen {
@@ -32,7 +32,8 @@ public class BloodBeingScreen extends RitualScreen {
     }
 
     private boolean canProlong(Player player) {
-        return BloodPrice.canPay(player, BloodBeingEntity.PROLONG_COST);
+        return BloodPrice.canPay(player, BloodBeingEntity.PROLONG_COST)
+                && (player.getAbilities().instabuild || BloodBond.canProlongCut(player));
     }
 
     private boolean canSacrifice(Player player, BloodBeingEntity being) {
