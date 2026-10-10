@@ -1,8 +1,8 @@
 package com.livrodassombras.event;
 
 import com.livrodassombras.LivroDasSombras;
-import com.livrodassombras.registry.ModItems;
 import com.livrodassombras.registry.ModSounds;
+import com.livrodassombras.summon.BloodWeapons;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -26,19 +26,19 @@ import net.minecraftforge.fml.common.Mod;
 import org.joml.Vector3f;
 
 /**
- * The Espada de Sangue dissipates when it leaves its owner:
+ * Every summoned weapon dissipates when it leaves its owner:
  * thrown on the ground, stored in a chest-like container, or when the owner dies.
  */
 @Mod.EventBusSubscriber(modid = LivroDasSombras.MOD_ID)
-public class SwordBindingEvents {
+public class WeaponBindingEvents {
 
-    /** Any sword item entity (Q key, inventory drop, dispenser...) turns into blood particles. */
+    /** Any weapon item entity (Q key, inventory drop, dispenser...) turns into blood particles. */
     @SubscribeEvent
     public static void onItemEntityJoin(EntityJoinLevelEvent event) {
         if (!(event.getEntity() instanceof ItemEntity itemEntity)) {
             return;
         }
-        if (!itemEntity.getItem().is(ModItems.ESPADA_DE_SANGUE.get())) {
+        if (!BloodWeapons.is(itemEntity.getItem())) {
             return;
         }
         if (event.getLevel().isClientSide) {
@@ -51,7 +51,7 @@ public class SwordBindingEvents {
         }
     }
 
-    /** Placing the sword in a chest, barrel, ender chest, shulker box, hopper or dispenser destroys it. */
+    /** Placing a weapon in a chest, barrel, ender chest, shulker box, hopper or dispenser destroys it. */
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.side != LogicalSide.SERVER) {
@@ -70,7 +70,7 @@ public class SwordBindingEvents {
             if (slot.container == player.getInventory()) {
                 continue; // the player's own inventory is fine
             }
-            if (slot.getItem().is(ModItems.ESPADA_DE_SANGUE.get())) {
+            if (BloodWeapons.is(slot.getItem())) {
                 slot.set(ItemStack.EMPTY);
                 removed = true;
             }
@@ -82,7 +82,7 @@ public class SwordBindingEvents {
         }
     }
 
-    /** When the player dies the sword disappears, even with keepInventory on. */
+    /** When the player dies the weapon disappears, even with keepInventory on. */
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) {
@@ -91,11 +91,11 @@ public class SwordBindingEvents {
 
         Inventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
-            if (inventory.getItem(i).is(ModItems.ESPADA_DE_SANGUE.get())) {
+            if (BloodWeapons.is(inventory.getItem(i))) {
                 inventory.setItem(i, ItemStack.EMPTY);
             }
         }
-        if (player.containerMenu.getCarried().is(ModItems.ESPADA_DE_SANGUE.get())) {
+        if (BloodWeapons.is(player.containerMenu.getCarried())) {
             player.containerMenu.setCarried(ItemStack.EMPTY);
         }
     }

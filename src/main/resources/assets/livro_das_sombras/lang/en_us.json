@@ -2,10 +2,17 @@
   "itemGroup.livro_das_sombras": "ID",
   "item.livro_das_sombras.livro_das_sombras": "Livro das Sombras",
   "item.livro_das_sombras.espada_de_sangue": "Espada de Sangue",
-  "message.livro_das_sombras.invocada": "The Espada de Sangue has been summoned.",
+  "message.livro_das_sombras.invocada": "Weapon summoned: %s",
   "message.livro_das_sombras.ja_invocada": "Você já tem uma arma manifestada.",
   "subtitles.livro_das_sombras.blood_summon": "Blood magic",
   "message.livro_das_sombras.inventario_cheio": "You need a free inventory slot.",
   "message.livro_das_sombras.sem_sangue": "You don't have enough blood for the summoning.",
-  "message.livro_das_sombras.espada_dissipada": "The Espada de Sangue has dissipated."
+  "message.livro_das_sombras.espada_dissipada": "The weapon has dissipated.",
+  "item.livro_das_sombras.livro_do_sangue": "Livro do Sangue",
+  "item.livro_das_sombras.lanca_de_sangue": "Lança de Sangue",
+  "item.livro_das_sombras.martelo_de_sangue": "Martelo de Sangue",
+  "item.livro_das_sombras.arco_de_sangue": "Arco de Sangue",
+  "entity.livro_das_sombras.lanca_de_sangue": "Lança de Sangue",
+  "gui.livro_das_sombras.livro_do_sangue.title": "Livro do Sangue",
+  "gui.livro_das_sombras.livro_do_sangue.cost": "Choose a weapon. Cost: 5 hearts and Nausea"
 }

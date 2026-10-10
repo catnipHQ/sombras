@@ -2,10 +2,17 @@
   "itemGroup.livro_das_sombras": "ID",
   "item.livro_das_sombras.livro_das_sombras": "Livro das Sombras",
   "item.livro_das_sombras.espada_de_sangue": "Espada de Sangue",
-  "message.livro_das_sombras.invocada": "A Espada de Sangue foi invocada.",
+  "message.livro_das_sombras.invocada": "Arma invocada: %s",
   "message.livro_das_sombras.ja_invocada": "Você já tem uma arma manifestada.",
   "subtitles.livro_das_sombras.blood_summon": "Magia de sangue",
   "message.livro_das_sombras.inventario_cheio": "Você precisa de um espaço livre no inventário.",
   "message.livro_das_sombras.sem_sangue": "Você não tem sangue suficiente para a invocação.",
-  "message.livro_das_sombras.espada_dissipada": "A Espada de Sangue se dissipou."
+  "message.livro_das_sombras.espada_dissipada": "A arma se dissipou.",
+  "item.livro_das_sombras.livro_do_sangue": "Livro do Sangue",
+  "item.livro_das_sombras.lanca_de_sangue": "Lança de Sangue",
+  "item.livro_das_sombras.martelo_de_sangue": "Martelo de Sangue",
+  "item.livro_das_sombras.arco_de_sangue": "Arco de Sangue",
+  "entity.livro_das_sombras.lanca_de_sangue": "Lança de Sangue",
+  "gui.livro_das_sombras.livro_do_sangue.title": "Livro do Sangue",
+  "gui.livro_das_sombras.livro_do_sangue.cost": "Escolha a arma. Custo: 5 corações e Náusea"
 }

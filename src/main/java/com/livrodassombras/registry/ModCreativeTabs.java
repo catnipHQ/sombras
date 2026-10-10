@@ -19,7 +19,11 @@ public class ModCreativeTabs {
                     .icon(() -> new ItemStack(ModItems.LIVRO_DAS_SOMBRAS.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.LIVRO_DAS_SOMBRAS.get());
+                        output.accept(ModItems.LIVRO_DO_SANGUE.get());
                         output.accept(ModItems.ESPADA_DE_SANGUE.get());
+                        output.accept(ModItems.LANCA_DE_SANGUE.get());
+                        output.accept(ModItems.MARTELO_DE_SANGUE.get());
+                        output.accept(ModItems.ARCO_DE_SANGUE.get());
                         // Future content goes here.
                     })
                     .build());

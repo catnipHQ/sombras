@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": { "layer0": "livro_das_sombras:item/arco_de_sangue" }
+}
