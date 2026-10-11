@@ -2,7 +2,9 @@ package com.livrodassombras.client;
 
 import com.livrodassombras.LivroDasSombras;
 import com.livrodassombras.registry.ModItems;
+import com.livrodassombras.ritual.BookPath;
 import com.livrodassombras.ritual.RitualBook;
+import com.livrodassombras.ritual.RitualBooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -26,31 +28,23 @@ public class ClientEvents {
                 continue;
             }
             ItemStack book = heldBook();
-            if (book.isEmpty()) {
+            BookPath path = BookPath.of(book);
+            if (path == null) {
                 continue;
             }
             int section = RitualBook.section(book);
             if (section == RitualBook.SECTION_NONE) {
-                mc.setScreen(new BloodBookRootScreen()); // nothing locked yet: pick a section first
+                mc.setScreen(new BloodBookRootScreen(path)); // nothing locked yet: pick a section first
             } else {
-                mc.setScreen(new RadialScreen(section));
+                mc.setScreen(new RadialScreen(section, path));
             }
         }
     }
 
-    /** The Livro do Sangue in the local player's hand (main hand first), or empty. */
+    /** The ritual book (Livro do Sangue or Livro do Tempo) in the local player's hand (main hand first), or empty. */
     static ItemStack heldBook() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) {
-            return ItemStack.EMPTY;
-        }
-        for (InteractionHand hand : InteractionHand.values()) {
-            ItemStack stack = mc.player.getItemInHand(hand);
-            if (stack.is(ModItems.LIVRO_DO_SANGUE.get())) {
-                return stack;
-            }
-        }
-        return ItemStack.EMPTY;
+        return mc.player == null ? ItemStack.EMPTY : RitualBooks.held(mc.player);
     }
 
     static long gameTime() {

@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "livro_das_sombras:item/livro_dos_espiritos"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "livro_das_sombras:carregado": 1
+      },
+      "model": "livro_das_sombras:item/livro_dos_espiritos_carregado"
+    }
+  ]
+}

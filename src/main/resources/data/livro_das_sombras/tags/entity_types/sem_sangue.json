@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:skeletons",
+    "minecraft:wither",
+    "minecraft:skeleton_horse",
+    "livro_das_sombras:esqueleto_do_tempo"
+  ]
+}

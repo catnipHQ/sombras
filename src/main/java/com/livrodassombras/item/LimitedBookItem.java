@@ -41,10 +41,14 @@ public abstract class LimitedBookItem extends Item {
         return false;
     }
 
+    protected ChatFormatting usesColor() {
+        return ChatFormatting.DARK_RED;
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         int left = stack.getMaxDamage() - stack.getDamageValue();
         tooltip.add(Component.translatable("tooltip.livro_das_sombras.usos", left, stack.getMaxDamage())
-                .withStyle(ChatFormatting.DARK_RED));
+                .withStyle(this.usesColor()));
     }
 }

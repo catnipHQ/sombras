@@ -1,6 +1,7 @@
 package com.livrodassombras.item;
 
 import com.livrodassombras.client.ClientHooks;
+import com.livrodassombras.ritual.BookPath;
 import com.livrodassombras.ritual.MinorRitual;
 import com.livrodassombras.ritual.MinorRituals;
 import com.livrodassombras.ritual.RitualBook;
@@ -37,7 +38,8 @@ public class LivroDoSangueItem extends LimitedBookItem {
         if (charged == null) {
             if (level.isClientSide) {
                 int section = RitualBook.section(book);
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openBloodBook(section));
+                BookPath path = this.path();
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openBook(path, section));
             }
             return InteractionResultHolder.consume(book);
         }
@@ -52,13 +54,18 @@ public class LivroDoSangueItem extends LimitedBookItem {
         return InteractionResultHolder.sidedSuccess(book, level.isClientSide);
     }
 
+    /** Which book this is: the Livro do Tempo overrides it. */
+    public BookPath path() {
+        return BookPath.BLOOD;
+    }
+
     @Override
     public Component getName(ItemStack stack) {
         MinorRitual charged = RitualBook.charged(stack);
         return charged == null
                 ? super.getName(stack)
-                : Component.translatable("item.livro_das_sombras.livro_do_sangue.carregado", charged.displayName())
-                        .withStyle(ChatFormatting.RED);
+                : Component.translatable(this.getDescriptionId() + ".carregado", charged.displayName())
+                        .withStyle(this.path().color());
     }
 
     @Override
@@ -78,7 +85,7 @@ public class LivroDoSangueItem extends LimitedBookItem {
         MinorRitual charged = RitualBook.charged(stack);
         if (charged != null) {
             tooltip.add(Component.translatable("tooltip.livro_das_sombras.ritual", charged.displayName())
-                    .withStyle(ChatFormatting.RED));
+                    .withStyle(this.path().color()));
             tooltip.add(Component.translatable("tooltip.livro_das_sombras.ritual.uso").withStyle(ChatFormatting.GRAY));
         }
     }

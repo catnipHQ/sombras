@@ -1,5 +1,6 @@
 package com.livrodassombras.entity;
 
+import com.livrodassombras.summon.Allegiance;
 import com.livrodassombras.client.ClientHooks;
 import com.livrodassombras.registry.ModEffects;
 import com.livrodassombras.summon.BloodBond;
@@ -367,10 +368,7 @@ public class BloodBeingEntity extends TamableAnimal {
             return true;
         }
         LivingEntity owner = this.getOwner();
-        if (owner == null) {
-            return false;
-        }
-        return target instanceof TamableAnimal pet && pet.isOwnedBy(owner);
+        return Allegiance.belongsTo(target, owner);
     }
 
     @Override

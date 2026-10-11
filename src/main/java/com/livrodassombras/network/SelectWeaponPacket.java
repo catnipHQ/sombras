@@ -1,7 +1,13 @@
 package com.livrodassombras.network;
 
 import com.livrodassombras.registry.ModItems;
+import com.livrodassombras.ritual.BookPath;
+import com.livrodassombras.ritual.RitualBooks;
 import com.livrodassombras.summon.BloodSummoning;
+import com.livrodassombras.summon.SpiritSummon;
+import com.livrodassombras.summon.SpiritSummoning;
+import com.livrodassombras.summon.TimeSummon;
+import com.livrodassombras.summon.TimeSummoning;
 import com.livrodassombras.summon.BloodWeapons;
 import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,7 +16,8 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.network.NetworkEvent;
 
 /**
- * Client to server: the option chosen in the Livro do Sangue menu.
+ * Client to server: the option chosen in a book's Invocações menu.
+ * Livro do Tempo: indexes of TimeSummon. Livro dos Espíritos: indexes of SpiritSummon. Livro do Sangue:
  * Indexes 0..n-1 are BloodWeapons.menuOrder(); index n (BloodWeapons.beingIndex()) is the Ser de Sangue.
  */
 public record SelectWeaponPacket(int index) {
@@ -32,11 +39,28 @@ public record SelectWeaponPacket(int index) {
             }
 
             // Never trust the client: the player must really be holding the book and be off cooldown.
-            Item book = ModItems.LIVRO_DO_SANGUE.get();
-            if (!player.getMainHandItem().is(book) && !player.getOffhandItem().is(book)) {
+            BookPath path = BookPath.of(RitualBooks.held(player));
+            if (path == null) {
                 return;
             }
+            Item book = path.book();
             if (player.getCooldowns().isOnCooldown(book)) {
+                return;
+            }
+
+            if (path == BookPath.SPIRIT) {
+                SpiritSummon summon = SpiritSummon.byIndex(packet.index());
+                if (summon != null) {
+                    SpiritSummoning.summon(player, summon, book);
+                }
+                return;
+            }
+
+            if (path == BookPath.TIME) {
+                TimeSummon summon = TimeSummon.byIndex(packet.index());
+                if (summon != null) {
+                    TimeSummoning.summon(player, summon, book);
+                }
                 return;
             }
 

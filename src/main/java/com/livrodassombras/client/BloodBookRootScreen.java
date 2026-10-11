@@ -3,26 +3,39 @@ package com.livrodassombras.client;
 import com.livrodassombras.network.BookSectionPacket;
 import com.livrodassombras.network.ModNetwork;
 import com.livrodassombras.registry.ModItems;
+import com.livrodassombras.ritual.BookPath;
 import com.livrodassombras.ritual.RitualBook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-/** First page of the Livro do Sangue: I. Invocações (weapons and Ser de Sangue), II. Rituais menores. */
+/** First page of a ritual book: I. Invocações, II. Rituais menores. Red for the Livro do Sangue, grey for the Livro do Tempo, light blue for the Livro dos Espíritos. */
 public class BloodBookRootScreen extends RitualScreen {
-    public BloodBookRootScreen() {
-        super(Component.translatable("gui.livro_das_sombras.livro_do_sangue.title"), 200);
+    private final BookPath path;
+
+    public BloodBookRootScreen(BookPath path) {
+        super(Component.translatable("gui.livro_das_sombras." + path.bookId() + ".title"), 200, BookScreens.theme(path));
+        this.path = path;
     }
 
     @Override
     protected void buildOptions() {
+        String key = "gui.livro_das_sombras." + this.path.bookId();
+        ItemStack summons = switch (this.path) {
+            case TIME -> new ItemStack(Items.SKELETON_SKULL);
+            case SPIRIT -> new ItemStack(Items.SOUL_LANTERN);
+            case BLOOD -> new ItemStack(ModItems.ESPADA_DE_SANGUE.get());
+        };
+        ItemStack rituals = switch (this.path) {
+            case TIME -> new ItemStack(Items.CLOCK);
+            case SPIRIT -> new ItemStack(Items.SOUL_TORCH);
+            case BLOOD -> new ItemStack(Items.FERMENTED_SPIDER_EYE);
+        };
         this.options.add(new Option(Component.translatable("gui.livro_das_sombras.livro_do_sangue.invocacoes"),
-                Component.translatable("gui.livro_das_sombras.livro_do_sangue.invocacoes.detail"),
-                new ItemStack(ModItems.ESPADA_DE_SANGUE.get()), null, true));
+                Component.translatable(key + ".invocacoes.detail"), summons, null, true));
         this.options.add(new Option(Component.translatable("gui.livro_das_sombras.livro_do_sangue.rituais"),
-                Component.translatable("gui.livro_das_sombras.livro_do_sangue.rituais.detail"),
-                new ItemStack(Items.FERMENTED_SPIDER_EYE), null, true));
+                Component.translatable(key + ".rituais.detail"), rituals, null, true));
     }
 
     @Override
@@ -34,6 +47,7 @@ public class BloodBookRootScreen extends RitualScreen {
     protected void choose(int index) {
         // The chosen section stays locked on the book until "Back".
         ModNetwork.CHANNEL.sendToServer(new BookSectionPacket(index));
-        Minecraft.getInstance().setScreen(index == RitualBook.SECTION_INVOCACOES ? new BloodBookScreen() : new MinorRitualsScreen());
+        Minecraft.getInstance().setScreen(index == RitualBook.SECTION_INVOCACOES
+                ? new BloodBookScreen(this.path) : new MinorRitualsScreen(this.path));
     }
 }
