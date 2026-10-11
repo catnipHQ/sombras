@@ -43,15 +43,72 @@ public final class SpiritRituals {
     // ---------------------------------------------------------------- Portal
 
     /**
-     * Two linked portals: one 2.5 blocks in front of the caster, the other where the caster is looking
-     * (on the first surface, up to 32 blocks away). Both face the way the caster faces, so walking forward
-     * through the near one comes out of the far one still walking forward. Open for 12 s; casting again
-     * closes the old pair.
+     * Right-click opens the first portal where the caster is looking (first surface up to 32 blocks away,
+     * or 2.5 blocks ahead if that is too close). Right-click again opens the second, which links the two.
+     * Placing the first is free; only the second counts as the cast (price, cooldown, book use).
+     * Both face the way the caster faced, so walking forward through one comes out of the other still
+     * walking forward. They stay open until removed (Shift + right-click on one) or the caster leaves.
+     * Casting again after a finished pair closes the old pair and starts a new one.
+     *
+     * @return true only when the pair is complete
      */
     static boolean castPortal(ServerPlayer player, ServerLevel level) {
-        Vec3 flat = Vec3.directionFromRotation(0.0F, player.getYRot());
-        Vec3 near = standingSpot(level, player.position().add(flat.scale(PORTAL_NEAR)));
+        Vec3 spot = portalSpot(player, level);
+        if (spot == null) {
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.portal.sem_espaco"), true);
+            return false;
+        }
 
+        SoulPortalEntity first = SoulPortalEntity.pendingOf(level, player);
+        if (first == null) {
+            // A finished pair from before is replaced by the new one.
+            SoulPortalEntity.closeAllOf(level, player);
+            SoulPortalEntity opened = SoulPortalEntity.place(level, player, spot, player.getYRot());
+            if (opened == null) {
+                return false;
+            }
+            portalEffects(level, opened);
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.portal.primeiro"), true);
+            return false;
+        }
+
+        if (first.level() != level || first.position().distanceTo(spot) < PORTAL_MIN_GAP) {
+            player.displayClientMessage(Component.translatable("message.livro_das_sombras.portal.perto"), true);
+            return false;
+        }
+        if (!MinorRituals.payPrice(player, MinorRitual.PORTAL)) {
+            return false;
+        }
+
+        SoulPortalEntity second = SoulPortalEntity.place(level, player, spot, player.getYRot());
+        if (second == null) {
+            return false;
+        }
+        SoulPortalEntity.link(first, second);
+        portalEffects(level, second);
+        level.playSound(null, player.blockPosition(), ModSounds.SOUL_WHISPER.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+        player.displayClientMessage(Component.translatable("message.livro_das_sombras.portal.aberto"), true);
+        return true;
+    }
+
+    /** Shift + right-click on a portal: it closes, and so does the other end. */
+    public static void removePortal(ServerPlayer player, SoulPortalEntity portal) {
+        if (portal.level() instanceof ServerLevel level) {
+            level.playSound(null, portal.blockPosition(), SoundEvents.SOUL_ESCAPE, SoundSource.PLAYERS, 0.8F, 1.2F);
+        }
+        portal.closeWithPartner();
+        player.displayClientMessage(Component.translatable("message.livro_das_sombras.portal.removido"), true);
+    }
+
+    private static void portalEffects(ServerLevel level, SoulPortalEntity portal) {
+        level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, portal.getX(), portal.getY() + 1.0D, portal.getZ(),
+                30, 0.3D, 0.6D, 0.3D, 0.04D);
+        level.playSound(null, portal.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.PLAYERS, 0.8F, 1.3F);
+    }
+
+    /** Where a portal opens: where the caster looks (up to 32 blocks), or just ahead if that is too close. Null if there is no room. */
+    @Nullable
+    private static Vec3 portalSpot(ServerPlayer player, ServerLevel level) {
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getViewVector(1.0F);
         BlockHitResult hit = level.clip(new ClipContext(eye, eye.add(look.scale(PORTAL_RANGE)),
@@ -65,29 +122,13 @@ public final class SpiritRituals {
             // A wall or a ceiling: step back out of it, then down to the floor.
             aim = hit.getLocation().subtract(look.scale(0.8D)).subtract(0.0D, 0.9D, 0.0D);
         }
-        Vec3 far = standingSpot(level, dropToFloor(level, player, aim));
-
-        if (near == null || far == null) {
-            player.displayClientMessage(Component.translatable("message.livro_das_sombras.portal.sem_espaco"), true);
-            return false;
+        Vec3 spot = standingSpot(level, dropToFloor(level, player, aim));
+        if (spot != null && spot.distanceTo(player.position()) >= PORTAL_NEAR) {
+            return spot;
         }
-        if (near.distanceTo(far) < PORTAL_MIN_GAP) {
-            player.displayClientMessage(Component.translatable("message.livro_das_sombras.portal.perto"), true);
-            return false;
-        }
-        if (!MinorRituals.payPrice(player, MinorRitual.PORTAL)) {
-            return false;
-        }
-
-        SoulPortalEntity.closeAllOf(level, player);
-        for (SoulPortalEntity portal : SoulPortalEntity.createPair(level, player, near, far, player.getYRot())) {
-            level.addFreshEntity(portal);
-            level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, portal.getX(), portal.getY() + 1.0D, portal.getZ(),
-                    30, 0.3D, 0.6D, 0.3D, 0.04D);
-            level.playSound(null, portal.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.PLAYERS, 0.8F, 1.3F);
-        }
-        level.playSound(null, player.blockPosition(), ModSounds.SOUL_WHISPER.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-        return true;
+        // Too close to the caster (or no room there): open it just in front instead.
+        Vec3 flat = Vec3.directionFromRotation(0.0F, player.getYRot());
+        return standingSpot(level, player.position().add(flat.scale(PORTAL_NEAR)));
     }
 
     /** Lets a point fall to the floor below it (up to 6 blocks); in mid-air it just floats there. */

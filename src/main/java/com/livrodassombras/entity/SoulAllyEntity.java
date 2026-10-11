@@ -3,62 +3,53 @@ package com.livrodassombras.entity;
 import com.livrodassombras.registry.ModEffects;
 import com.livrodassombras.registry.ModEntities;
 import com.livrodassombras.summon.Allegiance;
+import com.livrodassombras.summon.SpiritBound;
 import com.livrodassombras.summon.SpiritSummoning;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Aliado Espiritual: a hooded ghost summoned three at a time by the Livro dos Espíritos.
+ * Aliado Espiritual: a real Minecraft Allay, summoned three at a time by the Livro dos Espíritos.
  * <ul>
- *   <li>Support, not damage: 16 health, 2 attack, 2 armor, but every hit leaves the target with
- *       Weakness I (5 s) and Slowness I (4 s).</li>
+ *   <li>It is a vanilla Allay (same model, same flying, it follows its summoner like an Allay follows the
+ *       player it likes), with 16 health instead of 10.</li>
+ *   <li>Support, not damage: every second it saps the monsters near it with Weakness I (5 s) and Slowness I (4 s).</li>
  *   <li>Lives for 60 s; the summoner sees the remaining time as a status effect.</li>
- *   <li>Follows and defends its summoner like the Ser de Sangue, and also goes after monsters that
- *       come close to the summoner. No guard mode or ritual menu.</li>
- *   <li>A spirit: doesn't burn, doesn't take fall damage, and its summoner's side can't hurt it.</li>
+ *   <li>Can't be handed items or duplicated, and its summoner's side can't hurt it.</li>
  * </ul>
  */
-public class SoulAllyEntity extends TamableAnimal {
+public class SoulAllyEntity extends Allay implements SpiritBound {
     public static final int LIFETIME_TICKS = 20 * 60;
     public static final int SQUAD_SIZE = 3;
     private static final int OWNER_GRACE_TICKS = 20 * 5;
     public static final int WEAKNESS_TICKS = 20 * 5;
     public static final int SLOWNESS_TICKS = 20 * 4;
+    /** How far from the Allay a monster is sapped. */
+    private static final double AURA_RADIUS = 6.0D;
+    private static final int AURA_INTERVAL = 20;
 
+    @Nullable
+    private UUID summoner;
     private int lifeTicks = LIFETIME_TICKS;
     private int ownerMissingTicks;
 
@@ -68,69 +59,39 @@ public class SoulAllyEntity extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 16.0D)
-                .add(Attributes.ATTACK_DAMAGE, 2.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3D)
-                .add(Attributes.ARMOR, 2.0D)
-                .add(Attributes.FOLLOW_RANGE, 32.0D);
+        return Allay.createAttributes().add(Attributes.MAX_HEALTH, 16.0D);
     }
 
-    /** A new ally for {@code owner}, not yet added to the level. */
+    /** A new Allay for {@code owner}, not yet added to the level. */
     @Nullable
     public static SoulAllyEntity create(ServerLevel level, Player owner) {
         SoulAllyEntity ally = ModEntities.ALIADO_ESPIRITUAL.get().create(level);
         if (ally != null) {
-            ally.setTame(true);
-            ally.setOwnerUUID(owner.getUUID());
+            ally.summoner = owner.getUUID();
+            ally.getBrain().setMemory(MemoryModuleType.LIKED_PLAYER, owner.getUUID());
         }
         return ally;
     }
 
     @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.1D, 6.0F, 2.0F, false));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, SpiritGoals.guard(this));
+    @Nullable
+    public UUID getSummonerUUID() {
+        return this.summoner;
     }
 
-    /** Every hit weakens and slows: the Vex and the Golem do the damage, the allies hold the enemy down. */
-    @Override
-    public boolean doHurtTarget(Entity target) {
-        boolean hit = super.doHurtTarget(target);
-        if (hit && target instanceof LivingEntity living) {
-            living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_TICKS, 0), this);
-            living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, SLOWNESS_TICKS, 0), this);
-            if (this.level() instanceof ServerLevel level) {
-                level.sendParticles(ParticleTypes.SOUL, living.getX(), living.getY() + living.getBbHeight() * 0.6D,
-                        living.getZ(), 6, living.getBbWidth() * 0.3D, living.getBbHeight() * 0.25D,
-                        living.getBbWidth() * 0.3D, 0.02D);
-            }
-        }
-        return hit;
-    }
-
-    // ---------------------------------------------------------------- lifetime
+    // ---------------------------------------------------------------- lifetime and support
 
     @Override
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            // Its legs fade into blue flame.
-            if (this.random.nextInt(2) == 0) {
-                this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getRandomX(0.4D), this.getY() + this.random.nextDouble() * 0.5D,
-                        this.getRandomZ(0.4D), 0.0D, 0.015D, 0.0D);
+            if (this.random.nextInt(3) == 0) {
+                this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getRandomX(0.3D), this.getRandomY(),
+                        this.getRandomZ(0.3D), 0.0D, 0.01D, 0.0D);
             }
             return;
         }
-        if (!this.isAlive()) {
+        if (!this.isAlive() || !(this.level() instanceof ServerLevel level)) {
             return;
         }
         if (--this.lifeTicks <= 0) {
@@ -138,7 +99,7 @@ public class SoulAllyEntity extends TamableAnimal {
             return;
         }
 
-        LivingEntity owner = this.getOwner();
+        Player owner = SpiritGoals.summoner(this);
         if (owner == null) {
             if (++this.ownerMissingTicks > OWNER_GRACE_TICKS) {
                 this.dissipate();
@@ -151,16 +112,37 @@ public class SoulAllyEntity extends TamableAnimal {
             return;
         }
 
+        // An Allay follows the player it "likes": that is always its summoner.
+        if (this.tickCount % 20 == 0) {
+            this.getBrain().setMemory(MemoryModuleType.LIKED_PLAYER, owner.getUUID());
+        }
+
         MobEffectInstance timer = owner.getEffect(ModEffects.ALIADOS_ESPIRITUAIS.get());
         if (timer == null || timer.getDuration() < this.lifeTicks - 20) {
             owner.forceAddEffect(new MobEffectInstance(ModEffects.ALIADOS_ESPIRITUAIS.get(), this.lifeTicks, 0, false, false, true), this);
+        }
+
+        if (this.tickCount % AURA_INTERVAL == 0) {
+            this.sapEnemies(level);
+        }
+    }
+
+    /** Weakness and Slowness on every monster close to this Allay (and to its summoner). */
+    private void sapEnemies(ServerLevel level) {
+        for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(AURA_RADIUS),
+                e -> e.isAlive() && !e.isSpectator() && SpiritGoals.threatens(this, e))) {
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_TICKS, 0), this);
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, SLOWNESS_TICKS, 0), this);
+            level.sendParticles(ParticleTypes.SOUL, target.getX(), target.getY() + target.getBbHeight() * 0.6D,
+                    target.getZ(), 6, target.getBbWidth() * 0.3D, target.getBbHeight() * 0.25D,
+                    target.getBbWidth() * 0.3D, 0.02D);
         }
     }
 
     /** Ends the ally in blue soul fire (time up, summoner gone). */
     public void dissipate() {
         if (this.level() instanceof ServerLevel level) {
-            SpiritSummoning.vanish(level, this.getX(), this.getY() + 1.0D, this.getZ());
+            SpiritSummoning.vanish(level, this.getX(), this.getY() + 0.4D, this.getZ());
         }
         this.discard();
     }
@@ -169,14 +151,14 @@ public class SoulAllyEntity extends TamableAnimal {
     public void die(DamageSource source) {
         super.die(source);
         if (this.level() instanceof ServerLevel level) {
-            SpiritSummoning.vanish(level, this.getX(), this.getY() + 1.0D, this.getZ());
+            SpiritSummoning.vanish(level, this.getX(), this.getY() + 0.4D, this.getZ());
         }
     }
 
     @Override
     public void remove(RemovalReason reason) {
         super.remove(reason);
-        if (!this.level().isClientSide && reason.shouldDestroy() && this.getOwner() instanceof ServerPlayer owner
+        if (!this.level().isClientSide && reason.shouldDestroy() && SpiritGoals.summoner(this) instanceof ServerPlayer owner
                 && squadOf(owner).isEmpty()) {
             owner.removeEffect(ModEffects.ALIADOS_ESPIRITUAIS.get());
             owner.displayClientMessage(Component.translatable("message.livro_das_sombras.aliados_foram"), true);
@@ -187,7 +169,7 @@ public class SoulAllyEntity extends TamableAnimal {
     public static List<? extends SoulAllyEntity> squadOf(ServerPlayer player) {
         UUID id = player.getUUID();
         return player.serverLevel().getEntities(ModEntities.ALIADO_ESPIRITUAL.get(),
-                ally -> ally.isAlive() && !ally.isRemoved() && id.equals(ally.getOwnerUUID()));
+                ally -> ally.isAlive() && !ally.isRemoved() && id.equals(ally.getSummonerUUID()));
     }
 
     /** Safety net, every second: no allies left, no timer. */
@@ -205,108 +187,47 @@ public class SoulAllyEntity extends TamableAnimal {
 
     // ---------------------------------------------------------------- loyalty
 
-    /** The summoner and everything on the summoner's side. */
-    private boolean isFriendly(@Nullable Entity target) {
-        if (target == this || (target instanceof LivingEntity living && this.isOwnedBy(living))) {
-            return true;
+    private boolean isFriendly(@Nullable Entity entity) {
+        Player owner = SpiritGoals.summoner(this);
+        if (owner == null) {
+            return this.summoner != null && entity != null && this.summoner.equals(entity.getUUID());
         }
-        return Allegiance.belongsTo(target, this.getOwner());
+        return Allegiance.sameSide(entity, owner);
     }
 
     @Override
-    public boolean canAttack(LivingEntity target) {
-        return !this.isFriendly(target) && super.canAttack(target);
-    }
-
-    @Override
-    public void setTarget(@Nullable LivingEntity target) {
-        if (target != null && this.isFriendly(target)) {
-            return;
-        }
-        super.setTarget(target);
-    }
-
-    @Override
-    public boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
-        if (this.isFriendly(target)) {
-            return false;
-        }
-        if (target instanceof Player targetPlayer && owner instanceof Player ownerPlayer
-                && !ownerPlayer.canHarmPlayer(targetPlayer)) {
-            return false; // respects PvP settings and teams
-        }
-        return true;
+    public boolean isAlliedTo(Entity entity) {
+        return this.isFriendly(entity) || super.isAlliedTo(entity);
     }
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getEntity() != null && source.getEntity() != this && this.isFriendly(source.getEntity())) {
-            return false;
+            return false; // its own side can't hurt it (stray hits, area attacks)
         }
         return super.hurt(source, amount);
     }
 
     // ---------------------------------------------------------------- misc
 
-    @Override
-    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
-        return false;
-    }
-
-    @Override
-    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
-    }
-
+    /** A spirit can't be handed items (the Allay would keep them) or duplicated with amethyst. */
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         return InteractionResult.PASS;
     }
 
     @Override
-    public boolean isFood(ItemStack stack) {
+    public boolean removeWhenFarAway(double distanceSqr) {
         return false;
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
-        return null;
-    }
-
-    @Override
-    public boolean canBeLeashed(Player player) {
-        return false;
-    }
-
-    @Override
-    public float getVoicePitch() {
-        return 0.55F;
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return SoundEvents.VEX_AMBIENT;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.VEX_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return SoundEvents.VEX_DEATH;
-    }
-
-    @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
-        // Spirits make no footsteps.
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("LifeTicks", this.lifeTicks);
+        if (this.summoner != null) {
+            tag.putUUID("Summoner", this.summoner);
+        }
     }
 
     @Override
@@ -315,5 +236,6 @@ public class SoulAllyEntity extends TamableAnimal {
         if (tag.contains("LifeTicks")) {
             this.lifeTicks = tag.getInt("LifeTicks");
         }
+        this.summoner = tag.hasUUID("Summoner") ? tag.getUUID("Summoner") : null;
     }
 }

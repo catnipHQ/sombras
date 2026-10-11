@@ -1,10 +1,12 @@
 package com.livrodassombras.item;
 
 import com.livrodassombras.client.ClientHooks;
+import com.livrodassombras.entity.SoulPortalEntity;
 import com.livrodassombras.ritual.BookPath;
 import com.livrodassombras.ritual.MinorRitual;
 import com.livrodassombras.ritual.MinorRituals;
 import com.livrodassombras.ritual.RitualBook;
+import com.livrodassombras.ritual.SpiritRituals;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -23,7 +25,8 @@ import net.minecraftforge.fml.DistExecutor;
  * Upgraded Livro das Sombras. Right-click opens the book: I. Invocações (weapons and the Ser de Sangue)
  * or II. Rituais menores. A chosen section stays locked (the book reopens on it) until "Back" is used.
  * Choosing a ritual charges the book (an eye opens on its cover): right-click then casts it
- * (costing one of the book's uses), Shift + right-click cancels it. The R wheel picks from the locked section.
+ * (costing one of the book's uses), Shift + right-click cancels it (on the Livro dos Espíritos, Shift + right-click
+ * looking at one of your portals closes that portal instead). The R wheel picks from the locked section.
  */
 public class LivroDoSangueItem extends LimitedBookItem {
     public LivroDoSangueItem(Properties properties) {
@@ -34,6 +37,17 @@ public class LivroDoSangueItem extends LimitedBookItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack book = player.getItemInHand(hand);
         MinorRitual charged = RitualBook.charged(book);
+
+        // Shift + right-click on one of your portals with the Livro dos Espíritos closes it.
+        if (this.path() == BookPath.SPIRIT && player.isShiftKeyDown()) {
+            SoulPortalEntity portal = SoulPortalEntity.lookedAt(player);
+            if (portal != null) {
+                if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                    SpiritRituals.removePortal(serverPlayer, portal);
+                }
+                return InteractionResultHolder.sidedSuccess(book, level.isClientSide);
+            }
+        }
 
         if (charged == null) {
             if (level.isClientSide) {

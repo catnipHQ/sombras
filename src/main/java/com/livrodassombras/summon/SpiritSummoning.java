@@ -2,6 +2,7 @@ package com.livrodassombras.summon;
 
 import com.livrodassombras.entity.SoulAllyEntity;
 import com.livrodassombras.entity.SoulGolemEntity;
+import com.livrodassombras.entity.SoulPortalEntity;
 import com.livrodassombras.entity.SoulVexEntity;
 import com.livrodassombras.registry.ModSounds;
 import com.livrodassombras.ritual.RitualCooldowns;
@@ -78,10 +79,10 @@ public final class SpiritSummoning {
                     double angle = player.getYRot() * Mth.DEG_TO_RAD + Math.PI / 2.0D + (i - 1) * 0.9D;
                     double x = player.getX() + Math.cos(angle) * 1.6D;
                     double z = player.getZ() + Math.sin(angle) * 1.6D;
-                    ally.moveTo(x, player.getY(), z, player.getYRot(), 0.0F);
+                    ally.moveTo(x, player.getY() + 1.2D, z, player.getYRot(), 0.0F);
                     ally.setYHeadRot(player.getYRot());
                     level.addFreshEntity(ally);
-                    poof(level, x, player.getY() + 1.0D, z);
+                    poof(level, x, player.getY() + 1.4D, z);
                 }
                 warn(player, "message.livro_das_sombras.aliados_invocados");
             }
@@ -137,6 +138,7 @@ public final class SpiritSummoning {
     public static void dissipateAllOf(ServerPlayer player) {
         SoulVexEntity.dissipateAllOf(player);
         SoulAllyEntity.dissipateAllOf(player);
+        SoulPortalEntity.closeAllOf(player.serverLevel(), player);
         SoulGolemEntity golem = SpiritBond.find(player);
         if (golem != null) {
             golem.dissipate();
