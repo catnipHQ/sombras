@@ -2,7 +2,11 @@ package com.livrodassombras.event;
 
 import com.livrodassombras.LivroDasSombras;
 import com.livrodassombras.entity.BloodBeingEntity;
+import com.livrodassombras.entity.SoulAllyEntity;
+import com.livrodassombras.entity.SoulVexEntity;
 import com.livrodassombras.entity.TimeSkeletonEntity;
+import com.livrodassombras.summon.SpiritBond;
+import com.livrodassombras.summon.SpiritSummoning;
 import com.livrodassombras.summon.BloodBond;
 import net.minecraft.server.level.ServerPlayer;
 import com.livrodassombras.registry.ModSounds;
@@ -71,6 +75,9 @@ public class WeaponBindingEvents {
         if (player.tickCount % 20 == 0 && player instanceof ServerPlayer serverPlayer) {
             BloodBond.check(serverPlayer); // gives sacrificed hearts back if the Ser de Sangue is gone
             TimeSkeletonEntity.check(serverPlayer); // no skeletons left, no timer
+            SpiritBond.check(serverPlayer); // gives the Destroyer hearts back if the Golem de Almas is gone
+            SoulVexEntity.check(serverPlayer);
+            SoulAllyEntity.check(serverPlayer);
         }
 
         AbstractContainerMenu menu = player.containerMenu;
@@ -102,7 +109,7 @@ public class WeaponBindingEvents {
         }
     }
 
-    /** When the player dies the weapon disappears, even with keepInventory on, and so does their Ser de Sangue. */
+    /** When the player dies the weapon disappears, even with keepInventory on, and so do all their summoned creatures. */
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) {
@@ -123,6 +130,7 @@ public class WeaponBindingEvents {
         }
         if (player instanceof ServerPlayer serverPlayer) {
             TimeSkeletonEntity.dissipateAllOf(serverPlayer);
+            SpiritSummoning.dissipateAllOf(serverPlayer);
         }
     }
 

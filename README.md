@@ -1,6 +1,6 @@
-# Veritates 1.1.0
+# Veritates 1.2.0
 
-Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**. Desde a 1.1.0 há um segundo caminho, o **Livro do Tempo**.
+Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombras**, que invoca a Espada de Sangue, e o **Livro do Sangue**, a versão melhorada dele, que deixa você escolher entre quatro armas de sangue ou invocar um **Ser de Sangue**. Desde a 1.1.0 há um segundo caminho, o **Livro do Tempo**, e desde a 1.2.0 um terceiro, o **Livro dos Espíritos**.
 
 ## Livros
 
@@ -8,6 +8,7 @@ Mod **Veritates** para Minecraft **Forge 1.20.1**. Adiciona o **Livro das Sombra
 |------|-----------|
 | Livro das Sombras | Botão direito invoca a Espada de Sangue. |
 | Livro do Tempo | O caminho do tempo: livro preto com um relógio branco na capa. Funciona igual ao Livro do Sangue (duas seções, roda R, rituais preparados, 5 usos), com o menu em preto e cinza, e **paga em fome** em vez de vida. Por enquanto só existe no modo criativo. Veja abaixo. |
+| Livro dos Espíritos | O caminho das almas: livro de capa azul. Mesmas regras dos outros (duas seções, roda R, rituais preparados, 5 usos), com o menu em azul-claro, partículas de **fogo azul** (fogo de alma) e sons de almas. **Paga em níveis de experiência.** Por enquanto só no modo criativo. Veja abaixo. |
 | Livro do Sangue | Botão direito abre o livro em duas seções: **I. Invocações** (espada, lança, martelo, arco ou Ser de Sangue, como antes) e **II. Rituais menores** (feitiços de sangue, veja abaixo). Não substitui o Livro das Sombras, os dois existem. |
 
 ### Seções travadas e roda de seleção
@@ -70,6 +71,34 @@ A Foice e o Relógio seguem as regras das armas de sangue: uma arma por vez (som
 
 Se o alvo morrer, sumir ou se afastar demais durante a conjuração, o ritual se desfaz (o custo já foi pago). Como a marca do Reverter Passos fica com você, dá para marcar, trocar para outro ritual na roda, lutar, e voltar para o Reverter Passos depois.
 
+## Livro dos Espíritos
+
+Mesmo funcionamento dos outros livros (seções travadas, roda R, Shift + botão direito cancela o ritual preparado, 5 usos, recarga de 5 s nas invocações). O menu é azul-claro, com almas em espiral no fundo, e o preço é **níveis de experiência**. Cada invocação dá 2 s de **Escuridão** em vez de Náusea. Todas as criaturas seguem e protegem você como o Ser de Sangue (atacam quem você ataca e quem te ataca, e vão atrás de monstros hostis por perto) e nenhum ataque seu, de animais seus ou de outras invocações machuca o seu lado. Um grupo de cada tipo por vez; somem se você morrer ou ficar fora por mais de 5 s.
+
+### Invocações
+
+| Invocação | Custo | Recarga | Efeito |
+|-----------|-------|---------|--------|
+| Invocar Vex | 3 níveis | 30 s | **2 Vex espirituais** por **45 s**. Vex comum melhorado: 18 de vida (vex: 14), 5 de dano (vex: 4), atravessam paredes e voam. É o papel de dano da seita. |
+| Invocar Aliados | 3 níveis | 30 s | **3 aliados espirituais** por **60 s**. 16 de vida, 2 de armadura, dano baixo (2). Cada golpe dá **Fraqueza por 5 s** e **Lentidão por 4 s** no alvo. Papel de utilidade, não de dano. |
+| Invocar Golem de Almas | 6 níveis | 90 s | Um golem de vidro azul, do tamanho do Golem de Ferro, que **dura até morrer**. 120 de vida (golem: 100), 4 de armadura, 16 de dano (golem: 7 a 21). Recupera vida aos poucos fora de combate. **Shift + botão direito** nele (só o dono, a até 10 blocos) abre o menu de formas. |
+
+#### Menu do Golem de Almas
+
+| Opção | Efeito |
+|-------|--------|
+| I. Colosso | O golem passa a **carregar** cada ataque: levanta os braços por 1,5 s, com partículas de alma subindo e um anel de fogo azul se fechando, e então **desfere um golpe em área** (raio de 5 blocos, 18 de dano, joga os inimigos para cima). Recarga de 2 s entre golpes. Escolher de novo volta ao normal. |
+| II. Forma Destruidora | Você **sacrifica 5 corações** (vida máxima) **até o golem morrer**, ou até você voltar à forma normal. Em troca o golem fica maior e escuro, com **+80 de vida, +8 de armadura, +4 de resistência de armadura (dureza), +6 de dano e Resistência I**. Exige vida máxima de pelo menos 6 corações. Só uma Forma Destruidora por vez. |
+| III. Morra | Mata o golem na hora (devolve os corações, se houver sacrifício). |
+
+### Rituais menores
+
+| Ritual | Custo | Efeito | Recarga |
+|--------|-------|--------|---------|
+| Portal | 2 níveis | Abre **dois portais azuis**, do tamanho de um jogador e quase circulares: um **na sua frente** e outro **onde você mira** (até 32 blocos, ao menos 4 blocos de distância). Qualquer um (jogador, criatura, item, flecha) que atravessa um sai pelo outro, para o lado oposto, mantendo o movimento. Duram **12 s**; abrir outros fecha os seus anteriores. Cada coisa só passa uma vez a cada 0,5 s. | 25 s |
+| Fogo das Almas | 2 níveis | Uma **rajada de chamas azuis** em cone à sua frente (alcance de 7 blocos, 60° de abertura). Quem for atingido leva **6 de dano (3 corações)** de magia e pega fogo por 3 s. Não passa por paredes. Poupa você e suas criaturas. | 12 s |
+| Troca | 1 nível | Mire em um ser vivo a até 24 blocos: vocês **trocam de lugar**, com um rastro de almas entre os dois. Não funciona em chefes (Wither, Dragão do Fim) nem quando não há espaço no destino. | 8 s |
+
 ## Caldeirão Ritualístico
 
 É assim que se fabricam os livros. Receita (bancada):
@@ -103,7 +132,7 @@ Criatura invocada pelo Livro do Sangue (mesmo custo: 5 corações e Náusea).
   3. **Fortalecer:** 3 corações saem da sua barra de vida (vida máxima) até ele morrer. Em troca ele ganha +5 de dano, +6 de armadura, +2 de resistência de armadura e resiste a empurrões. Uma vez por criatura.
 - Só um Ser de Sangue por vez. Ele se dissipa se você morrer, ou se você sair do jogo ou trocar de dimensão por mais de 5 s.
 
-## Regras de invocação (valem para os dois livros)
+## Regras de invocação (valem para os três livros)
 
 - Cada livro tem **5 usos** (a barra de durabilidade e a dica do item mostram quantos restam). Invocações e rituais menores que dão certo gastam um uso cada. No último uso o livro se desfaz. Não aceita encantamentos (nem Inquebrável ou Remendo) e não pode ser consertado; para outro livro, faça o ritual do caldeirão de novo. No modo criativo não gasta.
 
@@ -129,7 +158,7 @@ Requer JDK 17 e Gradle 8.1.1.
 
 ```bash
 gradle wrapper --gradle-version 8.1.1   # só na primeira vez (gera o ./gradlew)
-./gradlew build                         # jar em build/libs/veritates-1.1.0.jar
+./gradlew build                         # jar em build/libs/veritates-1.2.0.jar
 ./gradlew runClient                     # abre o Minecraft para testar
 ```
 

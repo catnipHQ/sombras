@@ -24,4 +24,10 @@ public class ModEffects {
     public static final RegistryObject<MobEffect> PARALISIA = EFFECTS.register("paralisia", ParalysisEffect::new);
     public static final RegistryObject<MobEffect> ESQUELETOS_DO_TEMPO =
             EFFECTS.register("esqueletos_do_tempo", () -> new TimerEffect(0xD6D6D2));
+
+    // Livro dos Espíritos
+    public static final RegistryObject<MobEffect> VEX_ESPIRITUAIS =
+            EFFECTS.register("vex_espirituais", () -> new TimerEffect(0x6FE0FF));
+    public static final RegistryObject<MobEffect> ALIADOS_ESPIRITUAIS =
+            EFFECTS.register("aliados_espirituais", () -> new TimerEffect(0x9FEAF5));
 }

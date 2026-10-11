@@ -1,5 +1,6 @@
 package com.livrodassombras.ritual;
 
+import com.livrodassombras.summon.Allegiance;
 import java.util.function.Consumer;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,7 +12,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -96,7 +96,7 @@ public final class TimeRituals {
 
     /** The caster, their tamed animals and their summoned creatures. */
     static boolean isFriendly(Player caster, LivingEntity entity) {
-        return entity == caster || (entity instanceof TamableAnimal pet && pet.isOwnedBy(caster));
+        return Allegiance.sameSide(entity, caster);
     }
 
     /**

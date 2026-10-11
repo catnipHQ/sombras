@@ -21,4 +21,8 @@ public class ClientHooks {
     public static void openBeingMenu(int entityId) {
         Minecraft.getInstance().setScreen(new BloodBeingScreen(entityId));
     }
+
+    public static void openGolemMenu(int entityId) {
+        Minecraft.getInstance().setScreen(new SoulGolemScreen(entityId));
+    }
 }

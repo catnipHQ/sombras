@@ -5,6 +5,7 @@ import com.livrodassombras.ritual.ClientRevertMark;
 import com.livrodassombras.ritual.ClientRitualCooldowns;
 import com.livrodassombras.ritual.MinorRitual;
 import com.livrodassombras.ritual.RevertMarks;
+import com.livrodassombras.summon.SpiritSummon;
 import com.livrodassombras.summon.TimeSummon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,7 +17,7 @@ import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
 /**
  * Bottom-left corner of the HUD: one small bar per ritual (or summon) that is recharging, with its icon,
- * red for the Blood path and grey for the Time path. Above them, the Reverter Passos mark: distance and time left.
+ * red for the Blood path, grey for the Time path and light blue for the Spirit path. Above them, the Reverter Passos mark: distance and time left.
  */
 public class RitualCooldownOverlay implements IGuiOverlay {
     private static final int MARGIN = 4;
@@ -34,14 +35,21 @@ public class RitualCooldownOverlay implements IGuiOverlay {
         for (MinorRitual ritual : MinorRitual.values()) {
             float left = ClientRitualCooldowns.fraction(ritual, now);
             if (left > 0.0F) {
-                bar(graphics, y, ritual.icon(), left, ritual.path() == BookPath.TIME);
+                bar(graphics, y, ritual.icon(), left, ritual.path());
                 y -= ROW;
             }
         }
         for (TimeSummon summon : TimeSummon.values()) {
             float left = ClientRitualCooldowns.fraction(summon.id(), summon.cooldownTicks(), now);
             if (left > 0.0F) {
-                bar(graphics, y, summon.icon(), left, true);
+                bar(graphics, y, summon.icon(), left, BookPath.TIME);
+                y -= ROW;
+            }
+        }
+        for (SpiritSummon summon : SpiritSummon.values()) {
+            float left = ClientRitualCooldowns.fraction(summon.id(), summon.cooldownTicks(), now);
+            if (left > 0.0F) {
+                bar(graphics, y, summon.icon(), left, BookPath.SPIRIT);
                 y -= ROW;
             }
         }
@@ -59,7 +67,8 @@ public class RitualCooldownOverlay implements IGuiOverlay {
         }
     }
 
-    private static void bar(GuiGraphics graphics, int y, ItemStack icon, float left, boolean time) {
+    private static void bar(GuiGraphics graphics, int y, ItemStack icon, float left, BookPath path) {
+        RitualScreen.Theme theme = BookScreens.theme(path);
         int x = MARGIN;
         graphics.pose().pushPose();
         graphics.pose().translate(x, y + 1, 0.0F);
@@ -70,7 +79,7 @@ public class RitualCooldownOverlay implements IGuiOverlay {
         int bx = x + 11;
         int by = y + 4;
         graphics.fill(bx - 1, by - 1, bx + BAR_WIDTH + 1, by + 3, 0x99000000);
-        graphics.fill(bx, by, bx + BAR_WIDTH, by + 2, time ? 0xFF1E1E1E : 0xFF2A0000);
-        graphics.fill(bx, by, bx + Math.max(1, (int) (BAR_WIDTH * left)), by + 2, time ? 0xFFBEBEBE : 0xFFC41E1E);
+        graphics.fill(bx, by, bx + BAR_WIDTH, by + 2, 0xFF000000 | theme.barBack());
+        graphics.fill(bx, by, bx + Math.max(1, (int) (BAR_WIDTH * left)), by + 2, 0xFF000000 | theme.barFill());
     }
 }

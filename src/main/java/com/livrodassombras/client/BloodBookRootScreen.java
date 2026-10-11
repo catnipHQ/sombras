@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-/** First page of a ritual book: I. Invocações, II. Rituais menores. Red for the Livro do Sangue, grey for the Livro do Tempo. */
+/** First page of a ritual book: I. Invocações, II. Rituais menores. Red for the Livro do Sangue, grey for the Livro do Tempo, light blue for the Livro dos Espíritos. */
 public class BloodBookRootScreen extends RitualScreen {
     private final BookPath path;
 
@@ -22,13 +22,20 @@ public class BloodBookRootScreen extends RitualScreen {
     @Override
     protected void buildOptions() {
         String key = "gui.livro_das_sombras." + this.path.bookId();
-        boolean time = this.path == BookPath.TIME;
+        ItemStack summons = switch (this.path) {
+            case TIME -> new ItemStack(Items.SKELETON_SKULL);
+            case SPIRIT -> new ItemStack(Items.SOUL_LANTERN);
+            case BLOOD -> new ItemStack(ModItems.ESPADA_DE_SANGUE.get());
+        };
+        ItemStack rituals = switch (this.path) {
+            case TIME -> new ItemStack(Items.CLOCK);
+            case SPIRIT -> new ItemStack(Items.SOUL_TORCH);
+            case BLOOD -> new ItemStack(Items.FERMENTED_SPIDER_EYE);
+        };
         this.options.add(new Option(Component.translatable("gui.livro_das_sombras.livro_do_sangue.invocacoes"),
-                Component.translatable(key + ".invocacoes.detail"),
-                new ItemStack(time ? Items.SKELETON_SKULL : ModItems.ESPADA_DE_SANGUE.get()), null, true));
+                Component.translatable(key + ".invocacoes.detail"), summons, null, true));
         this.options.add(new Option(Component.translatable("gui.livro_das_sombras.livro_do_sangue.rituais"),
-                Component.translatable(key + ".rituais.detail"),
-                new ItemStack(time ? Items.CLOCK : Items.FERMENTED_SPIDER_EYE), null, true));
+                Component.translatable(key + ".rituais.detail"), rituals, null, true));
     }
 
     @Override

@@ -21,6 +21,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.LIVRO_DAS_SOMBRAS.get());
                         output.accept(ModItems.LIVRO_DO_SANGUE.get());
                         output.accept(ModItems.LIVRO_DO_TEMPO.get());
+                        output.accept(ModItems.LIVRO_DOS_ESPIRITOS.get());
                         output.accept(ModItems.CALDEIRAO_RITUALISTICO.get());
                         output.accept(ModItems.ESPADA_DE_SANGUE.get());
                         output.accept(ModItems.LANCA_DE_SANGUE.get());

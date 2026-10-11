@@ -8,6 +8,7 @@ import com.livrodassombras.ritual.ClientRitualCooldowns;
 import com.livrodassombras.ritual.MinorRitual;
 import com.livrodassombras.ritual.RitualBook;
 import com.livrodassombras.summon.BloodWeapons;
+import com.livrodassombras.summon.SpiritSummon;
 import com.livrodassombras.summon.TimeSummon;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The selection wheel (key R) for a ritual book's locked section (red for Blood, grey for Time). Move the mouse towards an
+ * The selection wheel (key R) for a ritual book's locked section (red for Blood, grey for Time, light blue for Spirit). Move the mouse towards an
  * option and release R (or click) to choose it. Esc, or R again with nothing chosen, closes it.
  */
 public class RadialScreen extends Screen {
@@ -43,6 +44,10 @@ public class RadialScreen extends Screen {
         if (section == RitualBook.SECTION_RITUAIS) {
             for (MinorRitual ritual : MinorRitual.of(path)) {
                 this.entries.add(new Entry(ritual.displayName(), ritual.icon(), null, ritual.id(), ritual.cooldownTicks()));
+            }
+        } else if (path == BookPath.SPIRIT) {
+            for (SpiritSummon summon : SpiritSummon.values()) {
+                this.entries.add(new Entry(summon.displayName(), summon.icon(), null, summon.id(), summon.cooldownTicks()));
             }
         } else if (path == BookPath.TIME) {
             for (TimeSummon summon : TimeSummon.values()) {
@@ -141,7 +146,7 @@ public class RadialScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics graphics) {
         // Light veil: the fight stays visible behind the wheel.
-        graphics.fillGradient(0, 0, this.width, this.height, alpha(this.theme.clock() ? 0x080808 : 0x100000, 0x55), 0x66000000);
+        graphics.fillGradient(0, 0, this.width, this.height, alpha(this.theme.wheelVeil(), 0x55), 0x66000000);
     }
 
     @Override
@@ -164,7 +169,7 @@ public class RadialScreen extends Screen {
             int y = cy + (int) Math.round(Math.sin(a) * RADIUS);
             boolean lit = i == this.selected;
 
-            graphics.fill(x - 13, y - 13, x + 13, y + 13, lit ? alpha(this.theme.rowGlow(), 0xAA) : alpha(this.theme.clock() ? 0x101010 : 0x140000, 0x88));
+            graphics.fill(x - 13, y - 13, x + 13, y + 13, lit ? alpha(this.theme.rowGlow(), 0xAA) : alpha(this.theme.wheelCell(), 0x88));
             int border = lit ? alpha(this.theme.numeralHover(), 0xFF) : alpha(rune, 0x66);
             graphics.fill(x - 13, y - 13, x + 13, y - 12, border);
             graphics.fill(x - 13, y + 12, x + 13, y + 13, border);

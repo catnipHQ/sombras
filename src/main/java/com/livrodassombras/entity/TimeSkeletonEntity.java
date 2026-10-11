@@ -1,5 +1,6 @@
 package com.livrodassombras.entity;
 
+import com.livrodassombras.summon.Allegiance;
 import com.livrodassombras.registry.ModEffects;
 import com.livrodassombras.registry.ModEntities;
 import com.livrodassombras.ritual.TimeRituals;
@@ -339,7 +340,7 @@ public class TimeSkeletonEntity extends TamableAnimal implements RangedAttackMob
             return true;
         }
         LivingEntity owner = this.getOwner();
-        return owner != null && target instanceof TamableAnimal pet && pet.isOwnedBy(owner);
+        return Allegiance.belongsTo(target, owner);
     }
 
     @Override

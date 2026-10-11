@@ -7,12 +7,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The two paths of ritual books. Both work the same way (sections, wheel, charged rituals, uses);
- * the Blood path pays in health, the Time path pays in hunger.
+ * The paths of ritual books. All work the same way (sections, wheel, charged rituals, uses);
+ * the Blood path pays in health, the Time path in hunger, the Spirit path in experience levels.
  */
 public enum BookPath {
     BLOOD("livro_do_sangue", ChatFormatting.RED),
-    TIME("livro_do_tempo", ChatFormatting.GRAY);
+    TIME("livro_do_tempo", ChatFormatting.GRAY),
+    SPIRIT("livro_dos_espiritos", ChatFormatting.AQUA);
 
     private final String bookId;
     private final ChatFormatting color;
@@ -22,7 +23,7 @@ public enum BookPath {
         this.color = color;
     }
 
-    /** "livro_do_sangue" or "livro_do_tempo": also the prefix of the book's menu translation keys. */
+    /** "livro_do_sangue", "livro_do_tempo" or "livro_dos_espiritos": also the prefix of the book's menu translation keys. */
     public String bookId() {
         return this.bookId;
     }
@@ -32,7 +33,11 @@ public enum BookPath {
     }
 
     public Item book() {
-        return this == BLOOD ? ModItems.LIVRO_DO_SANGUE.get() : ModItems.LIVRO_DO_TEMPO.get();
+        return switch (this) {
+            case BLOOD -> ModItems.LIVRO_DO_SANGUE.get();
+            case TIME -> ModItems.LIVRO_DO_TEMPO.get();
+            case SPIRIT -> ModItems.LIVRO_DOS_ESPIRITOS.get();
+        };
     }
 
     /** The path of a ritual book stack, or null if it isn't one. */
@@ -43,6 +48,9 @@ public enum BookPath {
         }
         if (stack.is(ModItems.LIVRO_DO_TEMPO.get())) {
             return TIME;
+        }
+        if (stack.is(ModItems.LIVRO_DOS_ESPIRITOS.get())) {
+            return SPIRIT;
         }
         return null;
     }
