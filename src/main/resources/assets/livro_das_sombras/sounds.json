@@ -31,5 +31,39 @@
         "volume": 0.6
       }
     ]
+  },
+  "soul_summon": {
+    "subtitle": "subtitles.livro_das_sombras.soul_summon",
+    "sounds": [
+      {
+        "name": "minecraft:particle.soul_escape",
+        "type": "event",
+        "pitch": 0.7,
+        "volume": 1.0
+      },
+      {
+        "name": "minecraft:entity.vex.charge",
+        "type": "event",
+        "pitch": 0.6,
+        "volume": 0.7
+      }
+    ]
+  },
+  "soul_whisper": {
+    "subtitle": "subtitles.livro_das_sombras.soul_whisper",
+    "sounds": [
+      {
+        "name": "minecraft:entity.vex.ambient",
+        "type": "event",
+        "pitch": 0.6,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:block.soul_sand.step",
+        "type": "event",
+        "pitch": 0.5,
+        "volume": 1.0
+      }
+    ]
   }
 }

@@ -27,17 +27,27 @@ public abstract class RitualScreen extends Screen {
     private static final int ROW_HEIGHT = 22;
     private static final int ROW_GAP = 3;
 
+    /** What turns slowly behind the list: a pentagram (Blood), a clock face (Time) or soul wisps (Spirit). */
+    public enum Motif { PENTAGRAM, CLOCK, SOULS }
+
     /**
      * A menu's palette. Blood: red on near-black. Time: white and grey on black, with a clock face
-     * instead of the pentagram. Both kept low-contrast on purpose.
+     * instead of the pentagram. Spirit: light blue on deep blue-black, with soul wisps.
+     * All kept low-contrast on purpose. {@code wheelVeil} and {@code wheelCell} tint the R wheel.
      */
     public record Theme(int title, int subtitle, int hint, int text, int textHover, int textDisabled,
                         int detail, int detailHover, int numeral, int numeralHover, int rune,
-                        int veil, int rowGlow, int rowEdge, int barBack, int barFill, boolean clock) {
+                        int veil, int rowGlow, int rowEdge, int barBack, int barFill, Motif motif,
+                        int wheelVeil, int wheelCell) {
         public static final Theme BLOOD = new Theme(0xC23B3B, 0x7A5858, 0x4E3838, 0xB5A3A3, 0xF2E2E2, 0x5A4646,
-                0x6E5050, 0xB86A6A, 0x5E3838, 0xD84848, 0xA01212, 0x0A0000, 0x5A0000, 0xC81818, 0x2A0000, 0xC41E1E, false);
+                0x6E5050, 0xB86A6A, 0x5E3838, 0xD84848, 0xA01212, 0x0A0000, 0x5A0000, 0xC81818, 0x2A0000, 0xC41E1E,
+                Motif.PENTAGRAM, 0x100000, 0x140000);
         public static final Theme TIME = new Theme(0xE6E6E6, 0x8C8C8C, 0x4C4C4C, 0xB4B4B4, 0xFFFFFF, 0x4A4A4A,
-                0x6E6E6E, 0xC8C8C8, 0x585858, 0xF0F0F0, 0x9E9E9E, 0x030303, 0x3C3C3C, 0xE8E8E8, 0x1E1E1E, 0xBEBEBE, true);
+                0x6E6E6E, 0xC8C8C8, 0x585858, 0xF0F0F0, 0x9E9E9E, 0x030303, 0x3C3C3C, 0xE8E8E8, 0x1E1E1E, 0xBEBEBE,
+                Motif.CLOCK, 0x080808, 0x101010);
+        public static final Theme SPIRIT = new Theme(0x7FE3FF, 0x5E8EA0, 0x3A5A68, 0xA6D6E6, 0xEFFDFF, 0x3E5662,
+                0x5C8898, 0x9EE8FF, 0x3C6676, 0x6FF0FF, 0x2FB8E0, 0x000A12, 0x004862, 0x4FE0FF, 0x022634, 0x3FD0F5,
+                Motif.SOULS, 0x000C14, 0x001620);
     }
 
     protected static final int TITLE = 0xC23B3B;
@@ -200,7 +210,26 @@ public abstract class RitualScreen extends Screen {
         }
 
         float r = radius - 9.0F;
-        if (this.theme.clock()) {
+        if (this.theme.motif() == Motif.SOULS) {
+            // Soul wisps: three arms spiralling in towards the centre, each tipped with a small flame.
+            for (int arm = 0; arm < 3; arm++) {
+                double base = turn * 3.0D + arm * Math.PI * 2.0D / 3.0D;
+                for (int i = 0; i <= 40; i++) {
+                    double t = i / 40.0D;
+                    double a = base + t * Math.PI * 1.6D;
+                    double d = r * (1.0D - t * 0.85D);
+                    int x = cx + (int) Math.round(Math.cos(a) * d);
+                    int y = cy + (int) Math.round(Math.sin(a) * d);
+                    graphics.fill(x, y, x + 1, y + 1, i % 3 == 0 ? inner : star);
+                }
+                int fx = cx + (int) Math.round(Math.cos(base) * r);
+                int fy = cy + (int) Math.round(Math.sin(base) * r);
+                graphics.fill(fx - 1, fy - 1, fx + 2, fy + 2, outer);
+                graphics.fill(fx, fy - 3, fx + 1, fy - 1, inner);
+            }
+            return;
+        }
+        if (this.theme.motif() == Motif.CLOCK) {
             // A clock face: twelve hour marks and two hands, the minute hand turning about once a minute.
             for (int i = 0; i < 12; i++) {
                 double a = i * Math.PI / 6.0D;

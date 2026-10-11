@@ -7,6 +7,10 @@ final class BookScreens {
     private BookScreens() {}
 
     static RitualScreen.Theme theme(BookPath path) {
-        return path == BookPath.TIME ? RitualScreen.Theme.TIME : RitualScreen.Theme.BLOOD;
+        return switch (path) {
+            case TIME -> RitualScreen.Theme.TIME;
+            case SPIRIT -> RitualScreen.Theme.SPIRIT;
+            case BLOOD -> RitualScreen.Theme.BLOOD;
+        };
     }
 }

@@ -7,6 +7,7 @@ import com.livrodassombras.item.BloodSpearItem;
 import com.livrodassombras.item.EspadaDeSangueItem;
 import com.livrodassombras.item.FoiceDoTempoItem;
 import com.livrodassombras.item.LivroDoTempoItem;
+import com.livrodassombras.item.LivroDosEspiritosItem;
 import com.livrodassombras.item.RelogioNegroItem;
 import com.livrodassombras.item.LivroDasSombrasItem;
 import com.livrodassombras.item.LivroDoSangueItem;
@@ -30,6 +31,10 @@ public class ModItems {
     /** Not craftable yet: creative tab only. */
     public static final RegistryObject<Item> LIVRO_DO_TEMPO = ITEMS.register("livro_do_tempo",
             () -> new LivroDoTempoItem(new Item.Properties()));
+
+    /** Not craftable yet: creative tab only. */
+    public static final RegistryObject<Item> LIVRO_DOS_ESPIRITOS = ITEMS.register("livro_dos_espiritos",
+            () -> new LivroDosEspiritosItem(new Item.Properties()));
 
     // Blocks
     public static final RegistryObject<Item> CALDEIRAO_RITUALISTICO = ITEMS.register("caldeirao_ritualistico",

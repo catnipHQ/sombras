@@ -1,5 +1,6 @@
 package com.livrodassombras.item;
 
+import com.livrodassombras.summon.Allegiance;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.livrodassombras.registry.ModSounds;
@@ -13,7 +14,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -126,7 +126,7 @@ public class BloodHammerItem extends Item {
                         && target.isAlive()
                         && !target.isSpectator()
                         && player.distanceToSqr(target) <= RADIUS * RADIUS
-                        && !(target instanceof TamableAnimal pet && pet.isOwnedBy(player)));
+                        && !Allegiance.belongsTo(target, player));
 
         for (LivingEntity target : targets) {
             if (target.hurt(serverLevel.damageSources().playerAttack(player), AOE_DAMAGE)) {

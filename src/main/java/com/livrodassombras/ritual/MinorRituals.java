@@ -1,9 +1,11 @@
 package com.livrodassombras.ritual;
 
+import com.livrodassombras.summon.Allegiance;
 import com.livrodassombras.registry.ModParticles;
 import com.livrodassombras.registry.ModSounds;
 import com.livrodassombras.summon.BloodPrice;
 import com.livrodassombras.summon.Bloodless;
+import com.livrodassombras.summon.SpiritPrice;
 import com.livrodassombras.summon.TimePrice;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +21,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
@@ -84,6 +85,9 @@ public final class MinorRituals {
             case LENTIDAO -> TimeRituals.castSlow(player, level);
             case MURCHAR -> TimeRituals.castWither(player, level);
             case REVERTER_PASSOS -> TimeRituals.castRevert(player, level);
+            case PORTAL -> SpiritRituals.castPortal(player, level);
+            case FOGO_DAS_ALMAS -> SpiritRituals.castSoulFire(player, level);
+            case TROCA -> SpiritRituals.castSwap(player, level);
         };
         if (cast && !player.getAbilities().instabuild) {
             RitualCooldowns.start(player, ritual);
@@ -297,7 +301,7 @@ public final class MinorRituals {
 
         private boolean canHit(LivingEntity target) {
             return target != this.caster && target.isAlive() && !target.isSpectator()
-                    && !(target instanceof TamableAnimal pet && pet.isOwnedBy(this.caster));
+                    && !Allegiance.belongsTo(target, this.caster);
         }
     }
 
@@ -338,15 +342,19 @@ public final class MinorRituals {
         return p.distanceTo(a.add(ab.scale(t)));
     }
 
-    /** Health on the Blood path, hunger on the Time path. Never kills, creative players pay nothing. */
+    /** Health on the Blood path, hunger on the Time path, levels on the Spirit path. Never kills, creative players pay nothing. */
     static boolean payPrice(Player player, MinorRitual ritual) {
-        boolean paid = ritual.path() == BookPath.TIME
-                ? TimePrice.pay(player, (int) ritual.cost())
-                : BloodPrice.pay(player, ritual.cost());
+        boolean paid = switch (ritual.path()) {
+            case TIME -> TimePrice.pay(player, (int) ritual.cost());
+            case SPIRIT -> SpiritPrice.pay(player, (int) ritual.cost());
+            case BLOOD -> BloodPrice.pay(player, ritual.cost());
+        };
         if (!paid) {
-            player.displayClientMessage(Component.translatable(ritual.path() == BookPath.TIME
-                    ? "message.livro_das_sombras.ritual_sem_fome"
-                    : "message.livro_das_sombras.ritual_sem_sangue"), true);
+            player.displayClientMessage(Component.translatable(switch (ritual.path()) {
+                case TIME -> "message.livro_das_sombras.ritual_sem_fome";
+                case SPIRIT -> "message.livro_das_sombras.ritual_sem_almas";
+                case BLOOD -> "message.livro_das_sombras.ritual_sem_sangue";
+            }), true);
             return false;
         }
         return true;

@@ -4,6 +4,8 @@ import com.livrodassombras.registry.ModItems;
 import com.livrodassombras.ritual.BookPath;
 import com.livrodassombras.ritual.RitualBooks;
 import com.livrodassombras.summon.BloodSummoning;
+import com.livrodassombras.summon.SpiritSummon;
+import com.livrodassombras.summon.SpiritSummoning;
 import com.livrodassombras.summon.TimeSummon;
 import com.livrodassombras.summon.TimeSummoning;
 import com.livrodassombras.summon.BloodWeapons;
@@ -15,7 +17,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 /**
  * Client to server: the option chosen in a book's Invocações menu.
- * Livro do Tempo: indexes of TimeSummon. Livro do Sangue:
+ * Livro do Tempo: indexes of TimeSummon. Livro dos Espíritos: indexes of SpiritSummon. Livro do Sangue:
  * Indexes 0..n-1 are BloodWeapons.menuOrder(); index n (BloodWeapons.beingIndex()) is the Ser de Sangue.
  */
 public record SelectWeaponPacket(int index) {
@@ -43,6 +45,14 @@ public record SelectWeaponPacket(int index) {
             }
             Item book = path.book();
             if (player.getCooldowns().isOnCooldown(book)) {
+                return;
+            }
+
+            if (path == BookPath.SPIRIT) {
+                SpiritSummon summon = SpiritSummon.byIndex(packet.index());
+                if (summon != null) {
+                    SpiritSummoning.summon(player, summon, book);
+                }
                 return;
             }
 

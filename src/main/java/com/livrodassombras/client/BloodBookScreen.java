@@ -8,6 +8,7 @@ import com.livrodassombras.ritual.BookPath;
 import com.livrodassombras.ritual.ClientRitualCooldowns;
 import com.livrodassombras.ritual.RitualBook;
 import com.livrodassombras.summon.BloodWeapons;
+import com.livrodassombras.summon.SpiritSummon;
 import com.livrodassombras.summon.TimeSummon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -17,7 +18,8 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Invocações (locked section). Livro do Sangue: the four weapons and the Ser de Sangue.
- * Livro do Tempo: the Esqueletinhos, the Foice do Tempo and the Relógio Negro. Number keys choose directly.
+ * Livro do Tempo: the Esqueletinhos, the Foice do Tempo and the Relógio Negro.
+ * Livro dos Espíritos: the Vex, the Aliados and the Golem de Almas. Number keys choose directly.
  */
 public class BloodBookScreen extends RitualScreen {
     static final ResourceLocation BEING_ICON =
@@ -33,6 +35,16 @@ public class BloodBookScreen extends RitualScreen {
 
     @Override
     protected void buildOptions() {
+        if (this.path == BookPath.SPIRIT) {
+            long now = ClientEvents.gameTime();
+            this.anyCooling = false;
+            for (SpiritSummon summon : SpiritSummon.values()) {
+                float cooldown = ClientRitualCooldowns.fraction(summon.id(), summon.cooldownTicks(), now);
+                this.anyCooling |= cooldown > 0.0F;
+                this.options.add(new Option(summon.displayName(), summon.detail(), summon.icon(), null, true, cooldown));
+            }
+            return;
+        }
         if (this.path == BookPath.TIME) {
             long now = ClientEvents.gameTime();
             this.anyCooling = false;

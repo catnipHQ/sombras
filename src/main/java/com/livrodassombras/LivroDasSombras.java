@@ -1,6 +1,9 @@
 package com.livrodassombras;
 
 import com.livrodassombras.entity.BloodBeingEntity;
+import com.livrodassombras.entity.SoulAllyEntity;
+import com.livrodassombras.entity.SoulGolemEntity;
+import com.livrodassombras.entity.SoulVexEntity;
 import com.livrodassombras.entity.TimeSkeletonEntity;
 import com.livrodassombras.network.ModNetwork;
 import com.livrodassombras.registry.ModBlockEntities;
@@ -44,5 +47,8 @@ public class LivroDasSombras {
     private void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.SER_DE_SANGUE.get(), BloodBeingEntity.createAttributes().build());
         event.put(ModEntities.ESQUELETO_DO_TEMPO.get(), TimeSkeletonEntity.createAttributes().build());
+        event.put(ModEntities.VEX_ESPIRITUAL.get(), SoulVexEntity.createAttributes().build());
+        event.put(ModEntities.ALIADO_ESPIRITUAL.get(), SoulAllyEntity.createAttributes().build());
+        event.put(ModEntities.GOLEM_DE_ALMAS.get(), SoulGolemEntity.createAttributes().build());
     }
 }

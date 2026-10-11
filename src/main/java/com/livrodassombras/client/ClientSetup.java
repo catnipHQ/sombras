@@ -25,6 +25,17 @@ public class ClientSetup {
         event.registerEntityRenderer(ModEntities.LANCA_DE_SANGUE.get(), BloodSpearRenderer::new);
         event.registerEntityRenderer(ModEntities.SER_DE_SANGUE.get(), BloodBeingRenderer::new);
         event.registerEntityRenderer(ModEntities.ESQUELETO_DO_TEMPO.get(), TimeSkeletonRenderer::new);
+        event.registerEntityRenderer(ModEntities.ALIADO_ESPIRITUAL.get(), SoulAllyRenderer::new);
+        event.registerEntityRenderer(ModEntities.GOLEM_DE_ALMAS.get(), SoulGolemRenderer::new);
+        event.registerEntityRenderer(ModEntities.PORTAL_DE_ALMAS.get(), SoulPortalRenderer::new);
+        registerVexRenderer(event);
+    }
+
+    /** The vanilla Vex model is typed on Vex itself, so its renderer is registered for our subclass without generics. */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void registerVexRenderer(EntityRenderersEvent.RegisterRenderers event) {
+        net.minecraft.client.renderer.entity.EntityRendererProvider provider = SoulVexRenderer::new;
+        event.registerEntityRenderer((net.minecraft.world.entity.EntityType) ModEntities.VEX_ESPIRITUAL.get(), provider);
     }
 
     /** Ritual cauldron: the vanilla cauldron textures tinted dark purple, and the water texture tinted blood red. */
@@ -48,12 +59,12 @@ public class ClientSetup {
                 ModItems.CALDEIRAO_RITUALISTICO.get());
     }
 
-    /** While a ritual is prepared the Livro do Sangue shows an eye on its cover, and the Livro do Tempo's clock lights up. */
+    /** While a ritual is prepared the Livro do Sangue shows an eye on its cover, the Livro do Tempo's clock lights up and the Livro dos Espíritos' eye opens in blue. */
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             for (net.minecraft.world.item.Item book : new net.minecraft.world.item.Item[] {
-                    ModItems.LIVRO_DO_SANGUE.get(), ModItems.LIVRO_DO_TEMPO.get()}) {
+                    ModItems.LIVRO_DO_SANGUE.get(), ModItems.LIVRO_DO_TEMPO.get(), ModItems.LIVRO_DOS_ESPIRITOS.get()}) {
                 ItemProperties.register(book, new ResourceLocation(LivroDasSombras.MOD_ID, "carregado"),
                         (stack, level, entity, seed) -> RitualBook.charged(stack) != null ? 1.0F : 0.0F);
             }

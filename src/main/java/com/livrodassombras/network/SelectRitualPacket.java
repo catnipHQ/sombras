@@ -44,7 +44,11 @@ public record SelectRitualPacket(int index) {
             player.displayClientMessage(Component.translatable("message.livro_das_sombras.ritual.preparado",
                     ritual.displayName()), true);
             player.level().playSound(null, player.blockPosition(),
-                    path == BookPath.TIME ? SoundEvents.LODESTONE_COMPASS_LOCK : SoundEvents.ENCHANTMENT_TABLE_USE,
+                    switch (path) {
+                        case TIME -> SoundEvents.LODESTONE_COMPASS_LOCK;
+                        case SPIRIT -> SoundEvents.SOUL_ESCAPE;
+                        case BLOOD -> SoundEvents.ENCHANTMENT_TABLE_USE;
+                    },
                     SoundSource.PLAYERS, 1.0F, 0.6F);
         });
         context.setPacketHandled(true);
