@@ -53,9 +53,10 @@ public class ModEntities {
     public static final RegistryObject<EntityType<SoulAllyEntity>> ALIADO_ESPIRITUAL = ENTITIES.register(
             "aliado_espiritual",
             () -> EntityType.Builder.<SoulAllyEntity>of(SoulAllyEntity::new, MobCategory.MISC)
-                    .sized(0.6F, 1.95F)
+                    .sized(0.35F, 0.6F) // same size as the vanilla Allay
                     .fireImmune()
                     .clientTrackingRange(8)
+                    .updateInterval(2)
                     .build("aliado_espiritual"));
 
     public static final RegistryObject<EntityType<SoulGolemEntity>> GOLEM_DE_ALMAS = ENTITIES.register(

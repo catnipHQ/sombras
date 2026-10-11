@@ -8,6 +8,7 @@ import com.livrodassombras.registry.ModItems;
 import com.livrodassombras.registry.ModParticles;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import com.livrodassombras.ritual.RitualBook;
+import net.minecraft.client.renderer.entity.AllayRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -25,7 +26,7 @@ public class ClientSetup {
         event.registerEntityRenderer(ModEntities.LANCA_DE_SANGUE.get(), BloodSpearRenderer::new);
         event.registerEntityRenderer(ModEntities.SER_DE_SANGUE.get(), BloodBeingRenderer::new);
         event.registerEntityRenderer(ModEntities.ESQUELETO_DO_TEMPO.get(), TimeSkeletonRenderer::new);
-        event.registerEntityRenderer(ModEntities.ALIADO_ESPIRITUAL.get(), SoulAllyRenderer::new);
+        event.<net.minecraft.world.entity.animal.allay.Allay>registerEntityRenderer(ModEntities.ALIADO_ESPIRITUAL.get(), AllayRenderer::new);
         event.registerEntityRenderer(ModEntities.GOLEM_DE_ALMAS.get(), SoulGolemRenderer::new);
         event.registerEntityRenderer(ModEntities.PORTAL_DE_ALMAS.get(), SoulPortalRenderer::new);
         registerVexRenderer(event);

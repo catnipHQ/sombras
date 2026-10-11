@@ -153,7 +153,7 @@
   "gui.livro_das_sombras.golem_de_almas.morra": "Morra",
   "gui.livro_das_sombras.golem_de_almas.morra.detail": "Mata o Golem na hora",
   "ritual.livro_das_sombras.portal": "Portal",
-  "ritual.livro_das_sombras.portal.detail": "2 níveis · dois portais, 12 s · 25 s",
+  "ritual.livro_das_sombras.portal.detail": "2 níveis · dois portais · 25 s",
   "ritual.livro_das_sombras.fogo_das_almas": "Fogo das Almas",
   "ritual.livro_das_sombras.fogo_das_almas.detail": "2 níveis · 3 ♥ + fogo azul · 7 blocos · 12 s",
   "ritual.livro_das_sombras.troca": "Troca",
@@ -176,6 +176,9 @@
   "message.livro_das_sombras.golem.forma.destroyer": "Golem em Forma Destruidora",
   "message.livro_das_sombras.portal.sem_espaco": "Não há espaço para abrir os portais.",
   "message.livro_das_sombras.portal.perto": "O alvo está perto demais: mire mais longe.",
+  "message.livro_das_sombras.portal.primeiro": "Primeiro portal aberto. Clique com o botão direito de novo para abrir o segundo.",
+  "message.livro_das_sombras.portal.aberto": "Portais ligados! Shift + botão direito num portal fecha.",
+  "message.livro_das_sombras.portal.removido": "Portal fechado.",
   "message.livro_das_sombras.troca.chefe": "%s é forte demais para trocar de lugar.",
   "message.livro_das_sombras.troca.sem_espaco": "Não há espaço para a troca.",
   "message.livro_das_sombras.troca.recebida": "%s trocou de lugar com você."
