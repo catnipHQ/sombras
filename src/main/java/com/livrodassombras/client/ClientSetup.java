@@ -1,7 +1,17 @@
 package com.livrodassombras.client;
 
 import com.livrodassombras.LivroDasSombras;
+import com.livrodassombras.block.RitualCauldronBlock;
+import com.livrodassombras.registry.ModBlocks;
 import com.livrodassombras.registry.ModEntities;
+import com.livrodassombras.registry.ModItems;
+import com.livrodassombras.registry.ModParticles;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import com.livrodassombras.ritual.RitualBook;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,5 +23,71 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.LANCA_DE_SANGUE.get(), BloodSpearRenderer::new);
+        event.registerEntityRenderer(ModEntities.SER_DE_SANGUE.get(), BloodBeingRenderer::new);
+        event.registerEntityRenderer(ModEntities.ESQUELETO_DO_TEMPO.get(), TimeSkeletonRenderer::new);
+        event.registerEntityRenderer(ModEntities.ALIADO_ESPIRITUAL.get(), SoulAllyRenderer::new);
+        event.registerEntityRenderer(ModEntities.GOLEM_DE_ALMAS.get(), SoulGolemRenderer::new);
+        event.registerEntityRenderer(ModEntities.PORTAL_DE_ALMAS.get(), SoulPortalRenderer::new);
+        registerVexRenderer(event);
+    }
+
+    /** The vanilla Vex model is typed on Vex itself, so its renderer is registered for our subclass without generics. */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void registerVexRenderer(EntityRenderersEvent.RegisterRenderers event) {
+        net.minecraft.client.renderer.entity.EntityRendererProvider provider = SoulVexRenderer::new;
+        event.registerEntityRenderer((net.minecraft.world.entity.EntityType) ModEntities.VEX_ESPIRITUAL.get(), provider);
+    }
+
+    /** Ritual cauldron: the vanilla cauldron textures tinted dark purple, and the water texture tinted blood red. */
+    private static final int CAULDRON_PURPLE = 0x7B4BA8;
+    private static final int CAULDRON_PURPLE_LIT = 0x8E58C2;
+    private static final int CAULDRON_BLOOD = 0x8A0A0A;
+
+    @SubscribeEvent
+    public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tintIndex) -> switch (tintIndex) {
+            case 0 -> state.hasProperty(RitualCauldronBlock.LIT) && state.getValue(RitualCauldronBlock.LIT)
+                    ? CAULDRON_PURPLE_LIT : CAULDRON_PURPLE;
+            case 1 -> CAULDRON_BLOOD;
+            default -> -1;
+        }, ModBlocks.CALDEIRAO_RITUALISTICO.get());
+    }
+
+    @SubscribeEvent
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> tintIndex == 0 ? CAULDRON_PURPLE : -1,
+                ModItems.CALDEIRAO_RITUALISTICO.get());
+    }
+
+    /** While a ritual is prepared the Livro do Sangue shows an eye on its cover, the Livro do Tempo's clock lights up and the Livro dos Espíritos' eye opens in blue. */
+    @SubscribeEvent
+    public static void clientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            for (net.minecraft.world.item.Item book : new net.minecraft.world.item.Item[] {
+                    ModItems.LIVRO_DO_SANGUE.get(), ModItems.LIVRO_DO_TEMPO.get(), ModItems.LIVRO_DOS_ESPIRITOS.get()}) {
+                ItemProperties.register(book, new ResourceLocation(LivroDasSombras.MOD_ID, "carregado"),
+                        (stack, level, entity, seed) -> RitualBook.charged(stack) != null ? 1.0F : 0.0F);
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void registerKeys(net.minecraftforge.client.event.RegisterKeyMappingsEvent event) {
+        event.register(ModKeys.WHEEL);
+    }
+
+    @SubscribeEvent
+    public static void registerOverlays(net.minecraftforge.client.event.RegisterGuiOverlaysEvent event) {
+        event.registerAboveAll("ritual_cooldowns", new RitualCooldownOverlay());
+    }
+
+    @SubscribeEvent
+    public static void registerParticles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.BLOOD_TRAIL.get(), BloodTrailParticle.Provider::new);
+    }
+
+    @SubscribeEvent
+    public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(ModModelLayers.SER_DE_SANGUE, BloodBeingModel::createBodyLayer);
     }
 }

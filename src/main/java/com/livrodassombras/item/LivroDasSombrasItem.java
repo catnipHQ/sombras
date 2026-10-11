@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /** Right-click to summon the Espada de Sangue (rules and cost live in BloodSummoning). */
-public class LivroDasSombrasItem extends Item {
+public class LivroDasSombrasItem extends LimitedBookItem {
     public LivroDasSombrasItem(Properties properties) {
         super(properties);
     }

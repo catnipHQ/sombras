@@ -1,11 +1,14 @@
 package com.livrodassombras.entity;
 
+import com.livrodassombras.registry.ModEffects;
 import com.livrodassombras.registry.ModEntities;
 import com.livrodassombras.registry.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,10 +22,12 @@ import net.minecraft.world.phys.Vec3;
 /**
  * The thrown Lança de Sangue. Works like a Trident with Loyalty: it comes back to the owner
  * after hitting something (or after sticking into a block), but always deals exactly 6 damage.
+ * A thrown hit also slows the target for 2 seconds and makes it bleed for as long (melee hits don't).
  */
 public class BloodSpearEntity extends AbstractArrow {
     public static final float DAMAGE = 6.0F;
     private static final int RETURN_STRENGTH = 3; // same pull as Loyalty III
+    private static final int SLOW_TICKS = 40;     // 2 seconds
 
     private boolean returning;
     private boolean returnSoundPlayed;
@@ -78,6 +83,8 @@ public class BloodSpearEntity extends AbstractArrow {
 
         if (target.hurt(source, DAMAGE) && target instanceof LivingEntity living) {
             this.doPostHurtEffects(living);
+            living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, SLOW_TICKS, 0, false, false, true), owner);
+            living.addEffect(new MobEffectInstance(ModEffects.SANGRANDO.get(), SLOW_TICKS, 0, false, false, true), owner);
         }
 
         this.returning = true;

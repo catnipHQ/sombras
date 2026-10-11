@@ -1,68 +1,101 @@
 package com.livrodassombras.client;
 
+import com.livrodassombras.LivroDasSombras;
+import com.livrodassombras.network.BookSectionPacket;
 import com.livrodassombras.network.ModNetwork;
 import com.livrodassombras.network.SelectWeaponPacket;
+import com.livrodassombras.ritual.BookPath;
+import com.livrodassombras.ritual.ClientRitualCooldowns;
+import com.livrodassombras.ritual.RitualBook;
 import com.livrodassombras.summon.BloodWeapons;
-import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
+import com.livrodassombras.summon.SpiritSummon;
+import com.livrodassombras.summon.TimeSummon;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-/** The menu opened by the Livro do Sangue: one button per weapon. */
-public class BloodBookScreen extends Screen {
-    private static final int BUTTON_WIDTH = 160;
-    private static final int BUTTON_HEIGHT = 24;
-    private static final int GAP = 6;
+/**
+ * Invocações (locked section). Livro do Sangue: the four weapons and the Ser de Sangue.
+ * Livro do Tempo: the Esqueletinhos, the Foice do Tempo and the Relógio Negro.
+ * Livro dos Espíritos: the Vex, the Aliados and the Golem de Almas. Number keys choose directly.
+ */
+public class BloodBookScreen extends RitualScreen {
+    static final ResourceLocation BEING_ICON =
+            new ResourceLocation(LivroDasSombras.MOD_ID, "textures/mob_effect/ser_de_sangue.png");
 
-    private final List<Item> weapons = BloodWeapons.menuOrder();
-    private int firstButtonY;
+    private final BookPath path;
+    private boolean anyCooling;
 
-    public BloodBookScreen() {
-        super(Component.translatable("gui.livro_das_sombras.livro_do_sangue.title"));
+    public BloodBookScreen(BookPath path) {
+        super(Component.translatable("gui.livro_das_sombras." + path.bookId() + ".title"), 176, BookScreens.theme(path));
+        this.path = path;
     }
 
     @Override
-    protected void init() {
-        int totalHeight = this.weapons.size() * BUTTON_HEIGHT + (this.weapons.size() - 1) * GAP;
-        this.firstButtonY = this.height / 2 - totalHeight / 2 + 10;
-        int x = this.width / 2 - BUTTON_WIDTH / 2 + 10;
+    protected void buildOptions() {
+        if (this.path == BookPath.SPIRIT) {
+            long now = ClientEvents.gameTime();
+            this.anyCooling = false;
+            for (SpiritSummon summon : SpiritSummon.values()) {
+                float cooldown = ClientRitualCooldowns.fraction(summon.id(), summon.cooldownTicks(), now);
+                this.anyCooling |= cooldown > 0.0F;
+                this.options.add(new Option(summon.displayName(), summon.detail(), summon.icon(), null, true, cooldown));
+            }
+            return;
+        }
+        if (this.path == BookPath.TIME) {
+            long now = ClientEvents.gameTime();
+            this.anyCooling = false;
+            for (TimeSummon summon : TimeSummon.values()) {
+                float cooldown = ClientRitualCooldowns.fraction(summon.id(), summon.cooldownTicks(), now);
+                this.anyCooling |= cooldown > 0.0F;
+                this.options.add(new Option(summon.displayName(), summon.detail(), summon.icon(), null, true, cooldown));
+            }
+            return;
+        }
+        for (Item weapon : BloodWeapons.menuOrder()) {
+            this.options.add(new Option(weapon.getDescription(), null, new ItemStack(weapon), null, true));
+        }
+        // The Ser de Sangue comes last (index BloodWeapons.beingIndex()).
+        this.options.add(new Option(Component.translatable("entity.livro_das_sombras.ser_de_sangue"), null,
+                ItemStack.EMPTY, BEING_ICON, true));
+    }
 
-        for (int i = 0; i < this.weapons.size(); i++) {
-            final int index = i;
-            Item weapon = this.weapons.get(i);
-            this.addRenderableWidget(Button.builder(weapon.getDescription(), button -> choose(index))
-                    .bounds(x, this.firstButtonY + i * (BUTTON_HEIGHT + GAP), BUTTON_WIDTH, BUTTON_HEIGHT)
-                    .build());
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.anyCooling && ClientEvents.gameTime() % 2L == 0L) {
+            this.rebuild(); // keep the bars moving
         }
     }
 
-    private void choose(int index) {
+    @Override
+    protected Component subtitle() {
+        return Component.translatable("gui.livro_das_sombras." + this.path.bookId() + ".cost");
+    }
+
+    @Override
+    protected Component hint() {
+        return Component.translatable("gui.livro_das_sombras.ritual.hint_roda", this.options.size(),
+                ModKeys.WHEEL.getTranslatedKeyMessage());
+    }
+
+    @Override
+    protected Component backLabel() {
+        return Component.translatable("gui.livro_das_sombras.voltar");
+    }
+
+    @Override
+    protected void back() {
+        ModNetwork.CHANNEL.sendToServer(new BookSectionPacket(RitualBook.SECTION_NONE));
+        Minecraft.getInstance().setScreen(new BloodBookRootScreen(this.path));
+    }
+
+    @Override
+    protected void choose(int index) {
         ModNetwork.CHANNEL.sendToServer(new SelectWeaponPacket(index));
         this.onClose();
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(graphics);
-        super.render(graphics, mouseX, mouseY, partialTick);
-
-        graphics.drawCenteredString(this.font, this.title, this.width / 2, this.firstButtonY - 38, 0xFFFFFF);
-        graphics.drawCenteredString(this.font,
-                Component.translatable("gui.livro_das_sombras.livro_do_sangue.cost"),
-                this.width / 2, this.firstButtonY - 24, 0xFF5555);
-
-        int iconX = this.width / 2 - BUTTON_WIDTH / 2 - 14;
-        for (int i = 0; i < this.weapons.size(); i++) {
-            graphics.renderItem(new ItemStack(this.weapons.get(i)),
-                    iconX, this.firstButtonY + i * (BUTTON_HEIGHT + GAP) + (BUTTON_HEIGHT - 16) / 2);
-        }
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
     }
 }

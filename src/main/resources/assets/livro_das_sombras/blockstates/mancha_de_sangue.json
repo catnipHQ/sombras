@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "livro_das_sombras:block/mancha_de_sangue",
+        "y": 0
+      },
+      {
+        "model": "livro_das_sombras:block/mancha_de_sangue",
+        "y": 90
+      },
+      {
+        "model": "livro_das_sombras:block/mancha_de_sangue",
+        "y": 180
+      },
+      {
+        "model": "livro_das_sombras:block/mancha_de_sangue",
+        "y": 270
+      }
+    ]
+  }
+}
