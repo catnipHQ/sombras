@@ -268,7 +268,8 @@ public class SoulGolemEntity extends IronGolem implements SpiritBound {
     public void dissipate() {
         if (this.level() instanceof ServerLevel level) {
             SpiritSummoning.vanish(level, this.getX(), this.getY() + 1.4D, this.getZ());
-            if (SpiritGoals.summoner(this) instanceof Player owner) {
+            Player owner = SpiritGoals.summoner(this);
+            if (owner != null) {
                 owner.displayClientMessage(Component.translatable("message.livro_das_sombras.golem_dissipado"), true);
             }
         }
@@ -294,7 +295,8 @@ public class SoulGolemEntity extends IronGolem implements SpiritBound {
 
     /** The summoner gets the Destroyer hearts back and is free to summon another golem. */
     private void releaseOwner() {
-        if (SpiritGoals.summoner(this) instanceof Player owner && SpiritBond.isBoundTo(owner, this)) {
+        Player owner = SpiritGoals.summoner(this);
+        if (owner != null && SpiritBond.isBoundTo(owner, this)) {
             SpiritBond.release(owner);
         }
     }
